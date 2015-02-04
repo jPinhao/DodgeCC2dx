@@ -1,0 +1,4 @@
+Dodge/cocos2d
+Dodge/proj.*
+!Dodge/proj.win32
+*.opensdf
