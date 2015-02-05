@@ -1,5 +1,11 @@
 Dodge/cocos2d
 Dodge/proj.*
-!Dodge/proj.win32
+!.h
+!.cpp
 *.opensdf
 *.suo
+Dodge/proj.win32/build-cfg.json
+Dodge/proj.win32/Dodge.sdf
+Dodge/proj.win32/Dodge.v12.suo
+Dodge/proj.win32/Dodge.vcxproj
+Dodge/proj.win32/Dodge.vcxproj.filters

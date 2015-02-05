@@ -1,0 +1,13 @@
+<Solution>
+  <PropertyGroup Name="Dodge" Version="2.0.8.0" Type="CocosStudio" />
+  <SolutionFolder>
+    <Group ctype="ResourceGroup">
+      <RootFolder Name=".">
+        <Image Name="Dot.png" />
+        <Image Name="edge_test.png" />
+        <Image Name="33-crinkled-paper-background-sml.jpg" />
+        <Project Name="level_square.csd" />
+      </RootFolder>
+    </Group>
+  </SolutionFolder>
+</Solution>
