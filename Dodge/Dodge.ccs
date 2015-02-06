@@ -3,10 +3,12 @@
   <SolutionFolder>
     <Group ctype="ResourceGroup">
       <RootFolder Name=".">
-        <Image Name="Dot.png" />
         <Image Name="edge_test.png" />
         <Image Name="33-crinkled-paper-background-sml.jpg" />
         <Project Name="level_square.csd" />
+        <Image Name="Dot.png" />
+        <File Name="Marker Felt.ttf" />
+        <Project Name="level_hexagon.csd" />
       </RootFolder>
     </Group>
   </SolutionFolder>
