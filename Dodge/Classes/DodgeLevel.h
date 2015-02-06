@@ -2,6 +2,7 @@
 #define __DODGELEVEL_H__
 
 #include "cocos2d.h"
+#include "Pellet.h"
 
 class DodgeLevel : public cocos2d::Scene
 {
@@ -9,7 +10,9 @@ class DodgeLevel : public cocos2d::Scene
 
 public:
 	static DodgeLevel* createFromFile(const std::string& filename);
-
+	Pellet* spawnPlayer();
+	Pellet* findPlayerPawn() const;
+	
 CC_CONSTRUCTOR_ACCESS:
 	Scene* loadSceneFromFile(const std::string& filename);
 	bool initWithFile(const std::string& filename);
@@ -19,8 +22,8 @@ CC_CONSTRUCTOR_ACCESS:
 private:
 	typedef cocos2d::Scene super;
 
-	void OnLevelStart();
-	void OnLevelRemove();
+	void onEnter() override;
+	void onExit() override;
 
 	cocos2d::Vec2 defaultSpawnPoint;
 };

@@ -63,16 +63,9 @@ void LevelManager::switchLevel(DodgeLevel *newLevel)
 		cocos2d::Scene *currentScene = director->getRunningScene();
 		if (currentScene != nullptr)
 		{
-			DodgeLevel *currentLevel = dynamic_cast<DodgeLevel*>(currentScene);
-			if (currentLevel != nullptr)
-			{
-				currentLevel->OnLevelRemove();
-			}
 			director->replaceScene(newLevel);
 		}
 		else director->runWithScene(newLevel);
-
-		newLevel->OnLevelStart();
 	}
 }
 

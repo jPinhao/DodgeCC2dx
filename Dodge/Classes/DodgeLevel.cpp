@@ -47,9 +47,9 @@ bool DodgeLevel::initWithFile(const std::string& filename)
 		Layer *scenery = Layer::create();
 		scenery->setTag(TAG_GAME_LAYER_SCENERY);
 		addChild(scenery, -1);
-		Layer *foreground = Layer::create();
-		foreground->setTag(TAG_GAME_LAYER_FOREGROUND);
-		addChild(foreground, 0);
+		Layer *playerLayer = Layer::create();
+		playerLayer->setTag(TAG_GAME_LAYER_PLAYER);
+		addChild(playerLayer, 0);
 		Layer *ui = Layer::create();
 		ui->setTag(TAG_GAME_LAYER_UI);
 		addChild(ui, 1);
@@ -57,11 +57,6 @@ bool DodgeLevel::initWithFile(const std::string& filename)
 		//process the Actors in the pre-made level
 		processLevelActors(*levelRoot, Vec2(getContentSize().width / levelRoot->getContentSize().width, getContentSize().height / levelRoot->getContentSize().height));
 		levelRoot = nullptr;
-
-		////instantiate the player pellet
-		//Pellet *playerPellet = Pellet::create();
-		//playerPellet->setPosition(defaultSpawnPoint);
-		//foreground->addChild(playerPellet, 0);
 
 		return true;
 	}
@@ -77,7 +72,7 @@ void DodgeLevel::processLevelActors(Node &processRoot, Vec2 ratioLoadedToScreen)
 {
 	Node *background = getChildByTag(TAG_GAME_LAYER_BACKGROUND);
 	Node *scenery = getChildByTag(TAG_GAME_LAYER_SCENERY);
-	Node *foreground = getChildByTag(TAG_GAME_LAYER_FOREGROUND);
+	Node *playerLayer = getChildByTag(TAG_GAME_LAYER_PLAYER);
 	Node *ui = getChildByTag(TAG_GAME_LAYER_UI);
 
 	Vector<Node*> children = processRoot.getChildren();
@@ -127,5 +122,61 @@ void DodgeLevel::processLevelActors(Node &processRoot, Vec2 ratioLoadedToScreen)
 	}
 }
 
-void DodgeLevel::OnLevelStart(){}
-void DodgeLevel::OnLevelRemove(){}
+void DodgeLevel::onEnter()
+{
+	super::onEnter();
+	Pellet *playerPawn = spawnPlayer();
+	CCASSERT(playerPawn, "ERROR: tried to start a level but couldn't spawn the player");
+	if (playerPawn)
+	{
+		auto listener = EventListenerTouchAllAtOnce::create();
+		listener->onTouchesBegan = CC_CALLBACK_2(Pellet::setTargetPosition,playerPawn);
+		listener->onTouchesMoved = CC_CALLBACK_2(Pellet::setTargetPosition,playerPawn);
+		listener->onTouchesEnded = CC_CALLBACK_2(Pellet::clearTargetPosition, playerPawn);
+		listener->onTouchesCancelled = CC_CALLBACK_2(Pellet::clearTargetPosition, playerPawn);
+		
+		auto dispatcher = playerPawn->getEventDispatcher();
+		dispatcher->addEventListenerWithSceneGraphPriority(listener, playerPawn);
+	}
+}
+
+void DodgeLevel::onExit()
+{
+	super::onExit();
+	Node *player = findPlayerPawn();
+	if (player) removeChild(player);
+}
+
+Pellet* DodgeLevel::spawnPlayer()
+{
+	Node *playerLayer = getChildByTag(TAG_GAME_LAYER_PLAYER);
+	CCASSERT(playerLayer, "ERROR: Couldn't find the player layer to spawn");
+	if (playerLayer)
+	{
+		Pellet *playerPawn = findPlayerPawn();
+		CCASSERT(playerPawn == nullptr, "ERROR: Trying to spawn the player when a pawn is already in place");
+		if (!playerPawn)
+		{
+			playerPawn = Pellet::create();
+			playerPawn->setPosition(defaultSpawnPoint);
+			playerLayer->addChild(playerPawn);
+		}
+		return playerPawn;
+	}
+	
+	return nullptr;
+}
+
+Pellet* DodgeLevel::findPlayerPawn() const
+{
+	Node *playerLayer = getChildByTag(TAG_GAME_LAYER_PLAYER);
+	if (playerLayer)
+	{
+		Node *playerNode = playerLayer->getChildByTag(TAG_GAME_PLAYERPAWN);
+		if (playerNode)
+		{
+			return dynamic_cast<Pellet*>(playerNode);
+		}
+	}
+	return nullptr;
+}
