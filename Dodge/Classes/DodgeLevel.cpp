@@ -35,23 +35,33 @@ bool DodgeLevel::initWithFile(const std::string& filename)
 		getPhysicsWorld()->setGravity(Vec2(0.f, 0.f));
 	}
 
+	auto director = Director::getInstance();
+	Size screenSize = director->getWinSize();
 	Node *levelRoot = CSLoader::createNode(filename);
-	
 	if (levelRoot)
 	{
-		// position our generated level in the centre and scale it to fill the scene
-		levelRoot->setAnchorPoint(Vec2(.5f, .5f));
-		levelRoot->setPosition(Vec2(getContentSize().width / 2, getContentSize().height / 2));
-		//levelRoot->setScale(getContentSize().width / levelRoot->getContentSize().width, getContentSize().height / levelRoot->getContentSize().height);
+		//add split game render layers
+		Layer *background = Layer::create();
+		background->setTag(TAG_GAME_LAYER_BACKGROUND);
+		addChild(background, -2);
+		Layer *scenery = Layer::create();
+		scenery->setTag(TAG_GAME_LAYER_SCENERY);
+		addChild(scenery, -1);
+		Layer *foreground = Layer::create();
+		foreground->setTag(TAG_GAME_LAYER_FOREGROUND);
+		addChild(foreground, 0);
+		Layer *ui = Layer::create();
+		ui->setTag(TAG_GAME_LAYER_UI);
+		addChild(ui, 1);
 
 		//process the Actors in the pre-made level
-		processLevelActors(*levelRoot);
+		processLevelActors(*levelRoot, Vec2(getContentSize().width / levelRoot->getContentSize().width, getContentSize().height / levelRoot->getContentSize().height));
+		levelRoot = nullptr;
 
-		/*Pellet *playerPellet = Pellet::create();
-		playerPellet->setPosition(defaultSpawnPoint);
-		levelRoot->addChild(playerPellet);*/
-
-		addChild(levelRoot);
+		////instantiate the player pellet
+		//Pellet *playerPellet = Pellet::create();
+		//playerPellet->setPosition(defaultSpawnPoint);
+		//foreground->addChild(playerPellet, 0);
 
 		return true;
 	}
@@ -59,15 +69,29 @@ bool DodgeLevel::initWithFile(const std::string& filename)
 	return false;
 }
 
-void DodgeLevel::processLevelActors(Node &loadedLevel)
+// read the nodes added from the level file and initialize their game properties
+// @processRoot - root of the loaded level
+// @ratioLoadedToScreen - ratio of original level size and current game screen size
+// @TODO - actually get the screen resizing and actor repositioning to work properly
+void DodgeLevel::processLevelActors(Node &processRoot, Vec2 ratioLoadedToScreen)
 {
-	Vector<Node*> children = loadedLevel.getChildren();
+	Node *background = getChildByTag(TAG_GAME_LAYER_BACKGROUND);
+	Node *scenery = getChildByTag(TAG_GAME_LAYER_SCENERY);
+	Node *foreground = getChildByTag(TAG_GAME_LAYER_FOREGROUND);
+	Node *ui = getChildByTag(TAG_GAME_LAYER_UI);
+
+	Vector<Node*> children = processRoot.getChildren();
+	processRoot.removeAllChildrenWithCleanup(false);
 	for (auto actor : children)
 	{
+		actor->setPosition(actor->getPosition().x * ratioLoadedToScreen.x, actor->getPosition().y * ratioLoadedToScreen.y);
+
 		switch (actor->getTag())
 		{
 			case TAG_EDITOR_WALL:
 			{
+				scenery->addChild(actor);
+
 				Size actorContentSize = actor->getContentSize();
 				PhysicsBody *wallBody = PhysicsBody::createBox(
 					Size(actor->getScaleX()*actorContentSize.width, actor->getScaleY()*actorContentSize.height) / 2,
@@ -76,17 +100,32 @@ void DodgeLevel::processLevelActors(Node &loadedLevel)
 				{
 					wallBody->setEnable(false);
 					wallBody->setDynamic(false);
-					actor->setPhysicsBody(wallBody);
+					//actor->setPhysicsBody(wallBody);
 				}
 				break;
 			}
 			case TAG_EDITOR_BG:
 			{
+				background->addChild(actor);
 				break;
 			}
-			case TAG_EDITOR_SPAWN :
+			case TAG_EDITOR_BG_SCORE:
+			{
+				background->addChild(actor);
+				break;
+			}
+			case TAG_EDITOR_SPAWN:
+			{
 				defaultSpawnPoint = actor->getPosition();
 				break;
+			}
+			default:
+			{
+				break;
+			}
 		}
 	}
 }
+
+void DodgeLevel::OnLevelStart(){}
+void DodgeLevel::OnLevelRemove(){}

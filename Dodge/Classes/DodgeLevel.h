@@ -5,18 +5,24 @@
 
 class DodgeLevel : public cocos2d::Scene
 {
+	friend class LevelManager;
+
 public:
 	static DodgeLevel* createFromFile(const std::string& filename);
 
 CC_CONSTRUCTOR_ACCESS:
+	Scene* loadSceneFromFile(const std::string& filename);
 	bool initWithFile(const std::string& filename);
-	void processLevelActors(Node &loadedLevel);
+	// read the nodes added from the level file and initialize their game properties
+	void processLevelActors(Node &loadedLevel, cocos2d::Vec2 ratioLoadedToScreen);
 
 private:
 	typedef cocos2d::Scene super;
 
-	cocos2d::Vec2 defaultSpawnPoint;
+	void OnLevelStart();
+	void OnLevelRemove();
 
+	cocos2d::Vec2 defaultSpawnPoint;
 };
 
 #endif
