@@ -55,18 +55,30 @@ bool LevelManager::isLevelAvailable(UINT index)
 	return false;
 }
 
-void LevelManager::switchLevel(DodgeLevel *newLevel)
+DodgeLevel* LevelManager::getCurrentLevel()
 {
+	DodgeLevel *currentLevel = nullptr;
 	cocos2d::Director *director = cocos2d::Director::getInstance();
 	if (director)
 	{
 		cocos2d::Scene *currentScene = director->getRunningScene();
-		if (currentScene != nullptr)
+		if (currentScene)
 		{
-			director->replaceScene(newLevel);
+			currentLevel = dynamic_cast<DodgeLevel*>(currentScene);
 		}
-		else director->runWithScene(newLevel);
 	}
+	return currentLevel;
+}
+
+void LevelManager::switchLevel(DodgeLevel *newLevel)
+{
+	cocos2d::Director *director = cocos2d::Director::getInstance();
+	DodgeLevel *currentLevel = getCurrentLevel();
+	if (currentLevel)
+	{
+		director->replaceScene(newLevel);
+	}
+	else director->runWithScene(newLevel);
 }
 
 

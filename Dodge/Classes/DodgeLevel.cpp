@@ -127,17 +127,6 @@ void DodgeLevel::onEnter()
 	super::onEnter();
 	Pellet *playerPawn = spawnPlayer();
 	CCASSERT(playerPawn, "ERROR: tried to start a level but couldn't spawn the player");
-	if (playerPawn)
-	{
-		auto listener = EventListenerTouchAllAtOnce::create();
-		listener->onTouchesBegan = CC_CALLBACK_2(Pellet::setTargetPosition,playerPawn);
-		listener->onTouchesMoved = CC_CALLBACK_2(Pellet::setTargetPosition,playerPawn);
-		listener->onTouchesEnded = CC_CALLBACK_2(Pellet::clearTargetPosition, playerPawn);
-		listener->onTouchesCancelled = CC_CALLBACK_2(Pellet::clearTargetPosition, playerPawn);
-		
-		auto dispatcher = playerPawn->getEventDispatcher();
-		dispatcher->addEventListenerWithSceneGraphPriority(listener, playerPawn);
-	}
 }
 
 void DodgeLevel::onExit()
@@ -161,6 +150,17 @@ Pellet* DodgeLevel::spawnPlayer()
 			playerPawn->setPosition(defaultSpawnPoint);
 			playerLayer->addChild(playerPawn);
 		}
+
+		//setup the player input (should build some sort of player controller)
+		auto listener = EventListenerTouchAllAtOnce::create();
+		listener->onTouchesBegan = CC_CALLBACK_2(Pellet::setTargetPosition, playerPawn);
+		listener->onTouchesMoved = CC_CALLBACK_2(Pellet::setTargetPosition, playerPawn);
+		listener->onTouchesEnded = CC_CALLBACK_2(Pellet::clearTargetPosition, playerPawn);
+		listener->onTouchesCancelled = CC_CALLBACK_2(Pellet::clearTargetPosition, playerPawn);
+
+		auto dispatcher = playerPawn->getEventDispatcher();
+		dispatcher->addEventListenerWithSceneGraphPriority(listener, playerPawn);
+
 		return playerPawn;
 	}
 	

@@ -16,6 +16,7 @@ public:
 	bool loadLevel(UINT index);
 	//check if a level is available
 	bool isLevelAvailable(UINT index);
+	DodgeLevel* getCurrentLevel();
 
 CC_CONSTRUCTOR_ACCESS:
 	LevelManager();

@@ -1,4 +1,5 @@
 #include "Pellet.h"
+#include "SpawnComponent.h"
 
 USING_NS_CC;
 
@@ -28,8 +29,13 @@ bool Pellet::initWithFile(const std::string& filename)
 	
 	//anchor point mid
 	setAnchorPoint(Vec2(.5f, .5f));
-
+	//initialize touPOsition for follow touch code
 	touchPosition.set(PELLET_NOTARGETX, PELLET_NOTARGETY);
+	//prepare spawn component
+	SpawnComponent *spawnComponent = SpawnComponent::create();
+	spawnComponent->setSpawnAnim("pellet_spawn.png", .6f, getTexture());
+	addComponent(spawnComponent);
+
 	//pellet physics setup
 	PhysicsBody *pelletBody = PhysicsBody::createCircle((getScale()*getContentSize().width) / 2,
 															PhysicsMaterial(0.f, 1.f, 0.f));
@@ -43,29 +49,8 @@ bool Pellet::initWithFile(const std::string& filename)
 
 		return true;
 	}
+
 	return false;
-}
-
-void Pellet::onEnter()
-{
-	super::onEnter();
-	BeginSpawn();
-}
-
-void Pellet::BeginSpawn()
-{
-	//set animate action, queue FinishSpawn()
-	Action *spawnSequence = Sequence::createWithTwoActions(Animate::create(Animation::create()), CallFunc::create(CC_CALLBACK_0(Pellet::FinishSpawn, this)));
-	runAction(spawnSequence);
-}
-
-void Pellet::FinishSpawn()
-{
-	if (getPhysicsBody())
-	{
-		getPhysicsBody()->setEnable(true);
-	}
-	scheduleUpdate();
 }
 
 void Pellet::update(float deltaTime)

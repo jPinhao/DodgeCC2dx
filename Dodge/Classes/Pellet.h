@@ -3,7 +3,7 @@
 
 #include "cocos2d.h"
 
-#define PELLET_SPEED 500.f
+#define PELLET_SPEED 300.f
 #define PELLET_NOTARGETX -99999
 #define PELLET_NOTARGETY PELLET_NOTARGETX
 
@@ -39,18 +39,6 @@ private:
 
 	float moveSpeed = PELLET_SPEED;
 	cocos2d::Vec2 touchPosition;
-	//spawning
-	//UPaperFlipbook *spawnAnimation;
-	void onEnter() override;
-	void BeginSpawn();
-	void FinishSpawn();
-
-	//animation utilities
-	//void PrepareAnimation(UPaperFlipbook *animation, bool loop);
-	//void FinishAnimation();
-	//UPaperFlipbookComponent *animComponent;
-	//UPaperSpriteComponent *spriteComponent;
-
 
 	//object utilities
 	//FVector CalcBounceDirection(const FVector &myDirection, const FVector &hitNormal);
