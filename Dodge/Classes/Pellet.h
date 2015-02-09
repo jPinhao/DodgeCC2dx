@@ -20,7 +20,7 @@ public:
 	void update(float deltaTime) override;
 
 	// OnColide event
-	//bool OnContactBegin(cocos2d::PhysicsContact &contact);
+	bool onContactBegin(cocos2d::PhysicsContact &contact);
 
 	//void ChaseTarget(float deltaTime);
 	//bool CanChase();

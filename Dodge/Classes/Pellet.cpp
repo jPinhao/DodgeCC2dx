@@ -46,7 +46,10 @@ bool Pellet::initWithFile(const std::string& filename)
 		setPhysicsBody(pelletBody);
 		//start as disabled until we've fully spawned
 		pelletBody->setEnable(false);
-
+		pelletBody->setContactTestBitmask(0xFFFFFFFF);
+		/*auto contactListener = EventListenerPhysicsContact::create();
+		contactListener->onContactBegin = CC_CALLBACK_1(Pellet::onContactBegin, this);
+		getEventDispatcher()->addEventListenerWithSceneGraphPriority(contactListener, this);*/
 		return true;
 	}
 
@@ -55,16 +58,31 @@ bool Pellet::initWithFile(const std::string& filename)
 
 void Pellet::update(float deltaTime)
 {
-	if (getPhysicsBody() && getPhysicsBody()->isEnabled())
+	auto myPhysicsBody = getPhysicsBody();
+	if (myPhysicsBody && myPhysicsBody->isEnabled())
 	{
 		if (touchPosition.x != PELLET_NOTARGETX && touchPosition.y != PELLET_NOTARGETY)
 		{
+			myPhysicsBody->resetForces();
+			
 			Vec2 velocity = touchPosition - getPosition();
 			float myRadius = getContentSize().width*getScale()/2;
-			if (velocity.length() <= myRadius) getPhysicsBody()->setVelocity(Vec2::ZERO);
-			else getPhysicsBody()->setVelocity(velocity.getNormalized()*moveSpeed);
+			//ensure we are touching outside the pellet to avoid back/forw movement
+			if (velocity.length() <= myRadius) myPhysicsBody->setVelocity(Vec2::ZERO);
+			else
+			{
+				velocity = velocity.getNormalized()*moveSpeed - myPhysicsBody->getVelocity();
+				Vec2 newForce = myPhysicsBody->getMass()*velocity / deltaTime;
+				myPhysicsBody->applyForce(newForce);
+			}			
 		}
 	}
+}
+
+//collision
+bool Pellet::onContactBegin(cocos2d::PhysicsContact &contact)
+{
+	return true;
 }
 
 //onTouch triggers
@@ -91,8 +109,10 @@ void Pellet::setTargetPosition(const std::vector<Touch*>& touches, Event* event)
 void Pellet::clearTargetPosition(const std::vector<cocos2d::Touch*>& touches, cocos2d::Event* event)
 {
 	touchPosition.set(PELLET_NOTARGETX, PELLET_NOTARGETY);
-	if (getPhysicsBody() && getPhysicsBody()->isEnabled())
+	auto myPhysicsBody = getPhysicsBody();
+	if (myPhysicsBody)
 	{
-		getPhysicsBody()->setVelocity(Vec2::ZERO);
+		myPhysicsBody->resetForces();
+		myPhysicsBody->setVelocity(Vec2::ZERO);
 	}
 }
