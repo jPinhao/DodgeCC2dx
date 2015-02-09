@@ -49,7 +49,7 @@ bool AppDelegate::setupRenderSettings()
 	auto director = Director::getInstance();
 	auto glView = director->getOpenGLView();
 	if (!glView) {
-		glView = GLViewImpl::create("My Game");//createWithRect("My Game",Rect(0, 0, 480, 320));
+		glView = GLViewImpl::create("Dodge");// createWithRect("My Game", Rect(0, 0, 512, 512));
 		director->setOpenGLView(glView);
 	}
 
@@ -61,7 +61,6 @@ bool AppDelegate::setupRenderSettings()
 	Size resourceSize;
 
 	searchPaths.push_back("Resources");
-	searchPaths.push_back("../res");
 	// if the device is iPad
 	if (screenSize.height >= 768) 
 	{
@@ -84,10 +83,12 @@ bool AppDelegate::setupRenderSettings()
 			resourceSize = Size(480, 320);
 		}
 	}
+	//level files path
+	searchPaths.push_back("../res");
 	fileUtils->setSearchPaths(searchPaths);
 	
 	director->setContentScaleFactor(resourceSize.width / designSize.width);
-	glView->setDesignResolutionSize(designSize.width, designSize.height, kResolutionFixedWidth);
+	glView->setDesignResolutionSize(designSize.width, designSize.height, ResolutionPolicy::NO_BORDER);
 
 	return true;
 }

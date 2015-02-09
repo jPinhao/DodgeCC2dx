@@ -12,17 +12,17 @@
         <PrePosition X="0.0000" Y="0.0000" />
         <PreSize X="0.0000" Y="0.0000" />
         <Children>
-          <NodeObjectData Name="background" ActionTag="393658115" FrameEvent="" Tag="2" ObjectIndex="2" RightMargin="448.0000" TopMargin="128.0000" ctype="SpriteObjectData">
-            <Position X="0.0000" Y="0.0000" />
-            <Scale ScaleX="1.8750" ScaleY="1.2500" />
-            <AnchorPoint />
+          <NodeObjectData Name="background" ActionTag="393658115" FrameEvent="" Tag="2" ObjectIndex="2" LeftMargin="351.1653" RightMargin="352.8347" TopMargin="192.8346" BottomMargin="191.1654" ctype="SpriteObjectData">
+            <Position X="479.1653" Y="319.1654" />
+            <Scale ScaleX="3.7435" ScaleY="2.4935" />
+            <AnchorPoint ScaleX="0.5000" ScaleY="0.5000" />
             <CColor A="255" R="255" G="255" B="255" />
-            <Size X="512.0000" Y="512.0000" />
-            <PrePosition X="0.0000" Y="0.0000" />
+            <Size X="256.0000" Y="256.0000" />
+            <PrePosition X="0.4991" Y="0.4987" />
             <PreSize X="0.0000" Y="0.0000" />
-            <FileData Type="Normal" Path="33-crinkled-paper-background-sml.jpg" />
+            <FileData Type="Normal" Path="dodge_background.png" />
           </NodeObjectData>
-          <NodeObjectData Name="bg_score" ActionTag="1685754501" Alpha="84" FrameEvent="" Tag="3" ObjectIndex="1" LeftMargin="380.0000" RightMargin="380.0000" TopMargin="220.0000" BottomMargin="220.0000" IsCustomSize="True" FontSize="72" LabelText="10" HorizontalAlignmentType="HT_Center" VerticalAlignmentType="VT_Center" ctype="TextObjectData">
+          <NodeObjectData Name="bg_score" ActionTag="1685754501" Alpha="84" FrameEvent="" Tag="3" ObjectIndex="1" LeftMargin="380.0000" RightMargin="380.0000" TopMargin="220.0000" BottomMargin="220.0000" FontSize="72" LabelText="10" IsCustomSize="True" HorizontalAlignmentType="HT_Center" VerticalAlignmentType="VT_Center" ctype="TextObjectData">
             <Position X="480.0000" Y="320.0000" />
             <Scale ScaleX="1.0000" ScaleY="1.0000" />
             <AnchorPoint ScaleX="0.5000" ScaleY="0.5000" />
@@ -32,94 +32,94 @@
             <PreSize X="0.2083" Y="0.3125" />
             <FontResource Type="Normal" Path="Marker Felt.ttf" />
           </NodeObjectData>
-          <NodeObjectData Name="wall" ActionTag="2045064568" Rotation="90.0000" RotationSkewX="90.0000" RotationSkewY="90.0000" FrameEvent="" Tag="1" ObjectIndex="3" LeftMargin="768.0000" RightMargin="-832.0000" TopMargin="-32.0909" BottomMargin="640.0909" ctype="SpriteObjectData">
-            <Position X="768.0000" Y="640.0909" />
+          <NodeObjectData Name="wall" ActionTag="2045064568" Rotation="90.0000" RotationSkewX="90.0000" RotationSkewY="90.0000" FrameEvent="" Tag="1" ObjectIndex="3" LeftMargin="304.0000" RightMargin="-304.0000" TopMargin="304.0000" BottomMargin="304.0000" ctype="SpriteObjectData">
+            <Position X="784.0000" Y="320.0000" />
             <Scale ScaleX="0.6250" ScaleY="1.0000" />
-            <AnchorPoint />
+            <AnchorPoint ScaleX="0.5000" ScaleY="0.5000" />
             <CColor A="255" R="255" G="255" B="255" />
-            <Size X="1024.0000" Y="32.0000" />
-            <PrePosition X="0.8000" Y="1.0001" />
+            <Size X="960.0000" Y="32.0000" />
+            <PrePosition X="0.8167" Y="0.5000" />
             <PreSize X="0.0000" Y="0.0000" />
-            <FileData Type="Normal" Path="edge_test.png" />
+            <FileData Type="Normal" Path="dodge_wall.png" />
           </NodeObjectData>
-          <NodeObjectData Name="wall" ActionTag="-1904916614" FrameEvent="" Tag="1" ObjectIndex="4" LeftMargin="159.9986" RightMargin="-223.9985" TopMargin="0.0010" BottomMargin="607.9990" ctype="SpriteObjectData">
-            <Position X="159.9986" Y="607.9990" />
+          <NodeObjectData Name="wall" ActionTag="-1904916614" FrameEvent="" Tag="1" ObjectIndex="4" TopMargin="0.0010" BottomMargin="607.9990" ctype="SpriteObjectData">
+            <Position X="480.0000" Y="623.9990" />
             <Scale ScaleX="0.6250" ScaleY="1.0000" />
-            <AnchorPoint />
+            <AnchorPoint ScaleX="0.5000" ScaleY="0.5000" />
             <CColor A="255" R="255" G="255" B="255" />
-            <Size X="1024.0000" Y="32.0000" />
-            <PrePosition X="0.1667" Y="0.9500" />
+            <Size X="960.0000" Y="32.0000" />
+            <PrePosition X="0.5000" Y="0.9750" />
             <PreSize X="0.0000" Y="0.0000" />
-            <FileData Type="Normal" Path="edge_test.png" />
+            <FileData Type="Normal" Path="dodge_wall.png" />
           </NodeObjectData>
-          <NodeObjectData Name="wall" ActionTag="420153376" Rotation="-90.0000" RotationSkewX="-90.0000" RotationSkewY="-89.9970" FrameEvent="" Tag="1" ObjectIndex="5" LeftMargin="191.9834" RightMargin="-255.9834" TopMargin="609.0910" BottomMargin="-1.0910" ctype="SpriteObjectData">
-            <Position X="191.9834" Y="-1.0910" />
+          <NodeObjectData Name="wall" ActionTag="420153376" Rotation="-90.0000" RotationSkewX="-90.0000" RotationSkewY="-89.9970" FrameEvent="" Tag="1" ObjectIndex="5" LeftMargin="-304.0009" RightMargin="304.0009" TopMargin="304.0000" BottomMargin="304.0000" ctype="SpriteObjectData">
+            <Position X="175.9991" Y="320.0000" />
             <Scale ScaleX="0.6250" ScaleY="1.0000" />
-            <AnchorPoint />
+            <AnchorPoint ScaleX="0.5000" ScaleY="0.5000" />
             <CColor A="255" R="255" G="255" B="255" />
-            <Size X="1024.0000" Y="32.0000" />
-            <PrePosition X="0.2000" Y="-0.0017" />
+            <Size X="960.0000" Y="32.0000" />
+            <PrePosition X="0.1833" Y="0.5000" />
             <PreSize X="0.0000" Y="0.0000" />
-            <FileData Type="Normal" Path="edge_test.png" />
+            <FileData Type="Normal" Path="dodge_wall.png" />
           </NodeObjectData>
-          <NodeObjectData Name="wall" ActionTag="1750060569" Rotation="180.0000" RotationSkewX="180.0000" RotationSkewY="180.0021" FrameEvent="" Tag="1" ObjectIndex="6" LeftMargin="799.9994" RightMargin="-863.9994" TopMargin="576.0118" BottomMargin="31.9881" ctype="SpriteObjectData">
-            <Position X="799.9994" Y="31.9881" />
+          <NodeObjectData Name="wall" ActionTag="1750060569" Rotation="180.0000" RotationSkewX="180.0000" RotationSkewY="180.0021" FrameEvent="" Tag="1" ObjectIndex="6" TopMargin="608.0009" BottomMargin="-0.0009" ctype="SpriteObjectData">
+            <Position X="480.0000" Y="15.9991" />
             <Scale ScaleX="0.6250" ScaleY="1.0000" />
-            <AnchorPoint />
+            <AnchorPoint ScaleX="0.5000" ScaleY="0.5000" />
             <CColor A="255" R="255" G="255" B="255" />
-            <Size X="1024.0000" Y="32.0000" />
-            <PrePosition X="0.8333" Y="0.0500" />
+            <Size X="960.0000" Y="32.0000" />
+            <PrePosition X="0.5000" Y="0.0250" />
             <PreSize X="0.0000" Y="0.0000" />
-            <FileData Type="Normal" Path="edge_test.png" />
+            <FileData Type="Normal" Path="dodge_wall.png" />
           </NodeObjectData>
           <NodeObjectData Name="player_spawn" ActionTag="-2068024944" FrameEvent="" Tag="4" ObjectIndex="1" IconVisible="True" LeftMargin="480.0000" RightMargin="480.0000" TopMargin="320.0000" BottomMargin="320.0000" ctype="SingleNodeObjectData">
             <Position X="480.0000" Y="320.0000" />
             <Scale ScaleX="1.0000" ScaleY="1.0000" />
-            <AnchorPoint />
+            <AnchorPoint ScaleX="0.5000" ScaleY="0.5000" />
             <CColor A="255" R="255" G="255" B="255" />
             <Size X="0.0000" Y="0.0000" />
             <PrePosition X="0.5000" Y="0.5000" />
             <PreSize X="0.0000" Y="0.0000" />
           </NodeObjectData>
-          <NodeObjectData Name="wall_Copy" ActionTag="910725502" Rotation="45.0000" RotationSkewX="45.0000" RotationSkewY="45.0000" FrameEvent="" Tag="1" ObjectIndex="8" LeftMargin="484.6670" RightMargin="-548.6670" TopMargin="-76.7056" BottomMargin="684.7056" ctype="SpriteObjectData">
-            <Position X="484.6670" Y="684.7056" />
+          <NodeObjectData Name="wall_Copy" ActionTag="910725502" Rotation="45.0000" RotationSkewX="45.0000" RotationSkewY="45.0000" FrameEvent="" Tag="1" ObjectIndex="8" LeftMargin="240.0000" RightMargin="-240.0000" TopMargin="144.0000" BottomMargin="464.0000" ctype="SpriteObjectData">
+            <Position X="720.0000" Y="480.0000" />
             <Scale ScaleX="0.5000" ScaleY="1.0000" />
-            <AnchorPoint />
+            <AnchorPoint ScaleX="0.5000" ScaleY="0.5000" />
             <CColor A="255" R="255" G="255" B="255" />
-            <Size X="1024.0000" Y="32.0000" />
-            <PrePosition X="0.5049" Y="1.0699" />
+            <Size X="960.0000" Y="32.0000" />
+            <PrePosition X="0.7500" Y="0.7500" />
             <PreSize X="0.0000" Y="0.0000" />
-            <FileData Type="Normal" Path="edge_test.png" />
+            <FileData Type="Normal" Path="dodge_wall.png" />
           </NodeObjectData>
-          <NodeObjectData Name="wall_Copy_Copy" ActionTag="1260343367" Rotation="224.9994" RotationSkewX="224.9994" RotationSkewY="224.9981" FrameEvent="" Tag="1" ObjectIndex="9" LeftMargin="475.3388" RightMargin="-539.3389" TopMargin="652.6996" BottomMargin="-44.6996" ctype="SpriteObjectData">
-            <Position X="475.3388" Y="-44.6996" />
+          <NodeObjectData Name="wall_Copy_Copy" ActionTag="1260343367" Rotation="224.9994" RotationSkewX="224.9994" RotationSkewY="224.9981" FrameEvent="" Tag="1" ObjectIndex="9" LeftMargin="-240.0000" RightMargin="240.0000" TopMargin="464.0000" BottomMargin="144.0000" ctype="SpriteObjectData">
+            <Position X="240.0000" Y="160.0000" />
             <Scale ScaleX="0.5000" ScaleY="1.0000" />
-            <AnchorPoint />
+            <AnchorPoint ScaleX="0.5000" ScaleY="0.5000" />
             <CColor A="255" R="255" G="255" B="255" />
-            <Size X="1024.0000" Y="32.0000" />
-            <PrePosition X="0.4951" Y="-0.0698" />
+            <Size X="960.0000" Y="32.0000" />
+            <PrePosition X="0.2500" Y="0.2500" />
             <PreSize X="0.0000" Y="0.0000" />
-            <FileData Type="Normal" Path="edge_test.png" />
+            <FileData Type="Normal" Path="dodge_wall.png" />
           </NodeObjectData>
-          <NodeObjectData Name="wall_Copy_Copy_0" ActionTag="-841598907" Rotation="135.0006" RotationSkewX="135.0006" RotationSkewY="135.0019" FrameEvent="" Tag="1" ObjectIndex="10" LeftMargin="846.7116" RightMargin="-910.7117" TopMargin="290.6727" BottomMargin="317.3273" ctype="SpriteObjectData">
-            <Position X="846.7116" Y="317.3273" />
+          <NodeObjectData Name="wall_Copy_Copy_0" ActionTag="-841598907" Rotation="135.0006" RotationSkewX="135.0006" RotationSkewY="135.0019" FrameEvent="" Tag="1" ObjectIndex="10" LeftMargin="240.0000" RightMargin="-240.0000" TopMargin="464.0000" BottomMargin="144.0000" ctype="SpriteObjectData">
+            <Position X="720.0000" Y="160.0000" />
             <Scale ScaleX="0.5000" ScaleY="1.0000" />
-            <AnchorPoint />
+            <AnchorPoint ScaleX="0.5000" ScaleY="0.5000" />
             <CColor A="255" R="255" G="255" B="255" />
-            <Size X="1024.0000" Y="32.0000" />
-            <PrePosition X="0.8820" Y="0.4958" />
+            <Size X="960.0000" Y="32.0000" />
+            <PrePosition X="0.7500" Y="0.2500" />
             <PreSize X="0.0000" Y="0.0000" />
-            <FileData Type="Normal" Path="edge_test.png" />
+            <FileData Type="Normal" Path="dodge_wall.png" />
           </NodeObjectData>
-          <NodeObjectData Name="wall_Copy_Copy_1" ActionTag="918174997" Rotation="-45.0012" RotationSkewX="-45.0012" RotationSkewY="-44.9938" FrameEvent="" Tag="1" ObjectIndex="11" LeftMargin="113.2751" RightMargin="-177.2750" TopMargin="285.3133" BottomMargin="322.6867" ctype="SpriteObjectData">
-            <Position X="113.2751" Y="322.6867" />
+          <NodeObjectData Name="wall_Copy_Copy_1" ActionTag="918174997" Rotation="-45.0012" RotationSkewX="-45.0012" RotationSkewY="-44.9938" FrameEvent="" Tag="1" ObjectIndex="11" LeftMargin="-240.0000" RightMargin="240.0000" TopMargin="144.0000" BottomMargin="464.0000" ctype="SpriteObjectData">
+            <Position X="240.0000" Y="480.0000" />
             <Scale ScaleX="0.5000" ScaleY="1.0000" />
-            <AnchorPoint />
+            <AnchorPoint ScaleX="0.5000" ScaleY="0.5000" />
             <CColor A="255" R="255" G="255" B="255" />
-            <Size X="1024.0000" Y="32.0000" />
-            <PrePosition X="0.1180" Y="0.5042" />
+            <Size X="960.0000" Y="32.0000" />
+            <PrePosition X="0.2500" Y="0.7500" />
             <PreSize X="0.0000" Y="0.0000" />
-            <FileData Type="Normal" Path="edge_test.png" />
+            <FileData Type="Normal" Path="dodge_wall.png" />
           </NodeObjectData>
         </Children>
       </ObjectData>

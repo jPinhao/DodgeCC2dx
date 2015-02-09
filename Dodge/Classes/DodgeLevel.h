@@ -10,6 +10,8 @@ class DodgeLevel : public cocos2d::Scene
 
 public:
 	static DodgeLevel* createFromFile(const std::string& filename);
+	//transform a coordinate from the level editor into one in our current game window
+	static cocos2d::Vec2 editorToGameCoordinateTransform(const cocos2d::Vec2& positionInEditor, const cocos2d::Vec2& levelSizeInEditor);
 	Pellet* spawnPlayer();
 	Pellet* findPlayerPawn() const;
 	
@@ -17,7 +19,7 @@ CC_CONSTRUCTOR_ACCESS:
 	Scene* loadSceneFromFile(const std::string& filename);
 	bool initWithFile(const std::string& filename);
 	// read the nodes added from the level file and initialize their game properties
-	void processLevelActors(Node &loadedLevel, cocos2d::Vec2 ratioLoadedToScreen);
+	void processLevelActors(Node *loadedLevel);
 
 private:
 	typedef cocos2d::Scene super;

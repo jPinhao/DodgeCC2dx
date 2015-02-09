@@ -1,6 +1,7 @@
 #include "DodgeLevel.h"
 #include "object_tags.h"
 #include "Pellet.h"
+#include "SpawnVolume.h"
 #include "cocostudio\ActionTimeline\CSLoader.h"
 
 USING_NS_CC;
@@ -31,6 +32,7 @@ bool DodgeLevel::initWithFile(const std::string& filename)
 	}
 	else
 	{
+		getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
 		//disable gravity
 		getPhysicsWorld()->setGravity(Vec2(0.f, 0.f));
 	}
@@ -55,7 +57,7 @@ bool DodgeLevel::initWithFile(const std::string& filename)
 		addChild(ui, 1);
 
 		//process the Actors in the pre-made level
-		processLevelActors(*levelRoot, Vec2(getContentSize().width / levelRoot->getContentSize().width, getContentSize().height / levelRoot->getContentSize().height));
+		processLevelActors(levelRoot);
 		levelRoot = nullptr;
 
 		return true;
@@ -64,44 +66,75 @@ bool DodgeLevel::initWithFile(const std::string& filename)
 	return false;
 }
 
+//transform a coordinate from the level editor into one in our current game window
+Vec2 DodgeLevel::editorToGameCoordinateTransform(const Vec2& positionEditor,const Vec2& levelSizeEditor)
+{
+	//visible window origin in Design Resolution space
+	Vec2 windowOrigin = Director::getInstance()->getVisibleOrigin();
+	//visible window size
+	Size windowSize = Director::getInstance()->getVisibleSize();
+	
+	Vec2 relativePos = Vec2(positionEditor.x / levelSizeEditor.x,
+		positionEditor.y / levelSizeEditor.y);
+	Vec2 newPosition = Vec2(relativePos.x * windowSize.width + windowOrigin.x,
+		relativePos.y * windowSize.height + windowOrigin.y);
+
+	return newPosition;
+}
+
 // read the nodes added from the level file and initialize their game properties
 // @processRoot - root of the loaded level
 // @ratioLoadedToScreen - ratio of original level size and current game screen size
 // @TODO - actually get the screen resizing and actor repositioning to work properly
-void DodgeLevel::processLevelActors(Node &processRoot, Vec2 ratioLoadedToScreen)
+void DodgeLevel::processLevelActors(Node *processRoot)
 {
 	Node *background = getChildByTag(TAG_GAME_LAYER_BACKGROUND);
 	Node *scenery = getChildByTag(TAG_GAME_LAYER_SCENERY);
 	Node *playerLayer = getChildByTag(TAG_GAME_LAYER_PLAYER);
 	Node *ui = getChildByTag(TAG_GAME_LAYER_UI);
 
-	Vector<Node*> children = processRoot.getChildren();
-	processRoot.removeAllChildrenWithCleanup(false);
+	Vector<Node*> children = processRoot->getChildren();
+	processRoot->removeAllChildrenWithCleanup(false);
+	Vec2 levelSizeEditor = processRoot->getContentSize();
+	Vec2 inGamePosition;
 	for (auto actor : children)
 	{
-		actor->setPosition(actor->getPosition().x * ratioLoadedToScreen.x, actor->getPosition().y * ratioLoadedToScreen.y);
-
+		inGamePosition = editorToGameCoordinateTransform(actor->getPosition(), levelSizeEditor);
+		actor->setPosition(inGamePosition);
 		switch (actor->getTag())
 		{
 			case TAG_EDITOR_WALL:
 			{
-				scenery->addChild(actor);
-
-				Size actorContentSize = actor->getContentSize();
-				PhysicsBody *wallBody = PhysicsBody::createBox(
-					Size(actor->getScaleX()*actorContentSize.width, actor->getScaleY()*actorContentSize.height) / 2,
-					PhysicsMaterial(0.f, 1.f, 0.f));
-				if (wallBody)
+				float rotation = actor->getRotationSkewX();
+				float scaleX = actor->getScaleX();
+				//for some reason keeping the level loaded sprite messes everything's positions...
+				actor = Sprite::create("dodge_wall.png");
+				if (actor)
 				{
-					wallBody->setEnable(false);
-					wallBody->setDynamic(false);
-					//actor->setPhysicsBody(wallBody);
+					actor->setScaleX(scaleX);
+					actor->setRotation(rotation);
+					SpawnVolume<Pellet> *spawnVolume = SpawnVolume<Pellet>::createWithSprite(static_cast<Sprite*>(actor));
+					spawnVolume->setPosition(inGamePosition);
+					scenery->addChild(spawnVolume);
 				}
+
 				break;
 			}
 			case TAG_EDITOR_BG:
 			{
-				background->addChild(actor);
+				//recreate a full-screen background with a tiling texture
+				Vec2 windowOrigin = Director::getInstance()->getVisibleOrigin();
+				Size windowSize = Director::getInstance()->getVisibleSize();
+				Sprite* backgroundSprite = Sprite::create("dodge_background.png", 
+					Rect(windowOrigin.x, windowOrigin.y,
+					windowSize.width,
+					windowSize.height));
+				backgroundSprite->setAnchorPoint(Vec2(.5f, .5f));
+				backgroundSprite->setPosition((windowOrigin+windowSize)/2);
+				Texture2D::TexParams params = { GL_LINEAR, GL_LINEAR, GL_REPEAT, GL_REPEAT };
+				backgroundSprite->getTexture()->setTexParameters(params);
+				background->addChild(backgroundSprite);
+
 				break;
 			}
 			case TAG_EDITOR_BG_SCORE:
@@ -151,15 +184,25 @@ Pellet* DodgeLevel::spawnPlayer()
 			playerLayer->addChild(playerPawn);
 		}
 
-		//setup the player input (should build some sort of player controller)
+		//setup the player input and events (should build some sort of player controller)
 		auto listener = EventListenerTouchAllAtOnce::create();
 		listener->onTouchesBegan = CC_CALLBACK_2(Pellet::setTargetPosition, playerPawn);
 		listener->onTouchesMoved = CC_CALLBACK_2(Pellet::setTargetPosition, playerPawn);
 		listener->onTouchesEnded = CC_CALLBACK_2(Pellet::clearTargetPosition, playerPawn);
 		listener->onTouchesCancelled = CC_CALLBACK_2(Pellet::clearTargetPosition, playerPawn);
 
+		auto contactListener = EventListenerPhysicsContact::create();
+		contactListener->onContactBegin = CC_CALLBACK_1(Pellet::onContactBegin, playerPawn);
+
 		auto dispatcher = playerPawn->getEventDispatcher();
 		dispatcher->addEventListenerWithSceneGraphPriority(listener, playerPawn);
+		dispatcher->addEventListenerWithSceneGraphPriority(contactListener, playerPawn);
+
+		//also disable restitution on the Player pellet, we shouldn't be bouncy like the others
+		if (playerPawn->getPhysicsBody())
+		{
+			playerPawn->getPhysicsBody()->getFirstShape()->setMaterial(PhysicsMaterial(0.f, 0.f, 0.f));
+		}
 
 		return playerPawn;
 	}
