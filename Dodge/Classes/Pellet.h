@@ -11,10 +11,12 @@ class Pellet : public cocos2d::Sprite
 {
 public:
 	static Pellet* create();
-
 	/* after all game elements are created */
 	//virtual void PostInitializeComponents() override;
 	//virtual void BeginPlay();
+
+	//returns an unchanged version of a pellet
+	Pellet* clone() const;
 
 	// frame update 
 	void update(float deltaTime) override;
@@ -28,7 +30,7 @@ public:
 
 	void setTargetPosition(const std::vector<cocos2d::Touch*>& touches, cocos2d::Event* event);
 	void clearTargetPosition(const std::vector<cocos2d::Touch*>& touches, cocos2d::Event* event);
-	//bool SetMovementDirection(const FVector &movementDirection);
+	void SetMovementDirection(cocos2d::Vec2 newDirection);
 	//FVector& GetMovementDirection();
 
 CC_CONSTRUCTOR_ACCESS:
@@ -39,6 +41,7 @@ private:
 
 	float moveSpeed = PELLET_SPEED;
 	cocos2d::Vec2 touchPosition;
+	cocos2d::Vec2 moveDirection;
 
 	//object utilities
 	//FVector CalcBounceDirection(const FVector &myDirection, const FVector &hitNormal);

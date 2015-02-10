@@ -1,5 +1,4 @@
 #include "DodgeLevel.h"
-#include "object_tags.h"
 #include "Pellet.h"
 #include "SpawnVolume.h"
 #include "cocostudio\ActionTimeline\CSLoader.h"
@@ -32,7 +31,6 @@ bool DodgeLevel::initWithFile(const std::string& filename)
 	}
 	else
 	{
-		getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
 		//disable gravity
 		getPhysicsWorld()->setGravity(Vec2(0.f, 0.f));
 	}
@@ -113,7 +111,7 @@ void DodgeLevel::processLevelActors(Node *processRoot)
 				{
 					actor->setScaleX(scaleX);
 					actor->setRotation(rotation);
-					SpawnVolume<Pellet> *spawnVolume = SpawnVolume<Pellet>::createWithSprite(static_cast<Sprite*>(actor));
+					SpawnVolume *spawnVolume = SpawnVolume::createWithSprite(*Pellet::create(),static_cast<Sprite*>(actor));
 					spawnVolume->setPosition(inGamePosition);
 					scenery->addChild(spawnVolume);
 				}
@@ -171,19 +169,16 @@ void DodgeLevel::onExit()
 
 Pellet* DodgeLevel::spawnPlayer()
 {
-	Node *playerLayer = getChildByTag(TAG_GAME_LAYER_PLAYER);
-	CCASSERT(playerLayer, "ERROR: Couldn't find the player layer to spawn");
-	if (playerLayer)
+	Pellet *playerPawn = findPlayerPawn();
+	CCASSERT(playerPawn == nullptr, "ERROR: Trying to spawn the player when a pawn is already in place");
+	if (!playerPawn)
 	{
-		Pellet *playerPawn = findPlayerPawn();
-		CCASSERT(playerPawn == nullptr, "ERROR: Trying to spawn the player when a pawn is already in place");
-		if (!playerPawn)
-		{
-			playerPawn = Pellet::create();
-			playerPawn->setPosition(defaultSpawnPoint);
-			playerLayer->addChild(playerPawn);
-		}
+		playerPawn = spawnUnit(Pellet::create(),defaultSpawnPoint);
+	}
 
+	CCASSERT(!(playerPawn == nullptr), "ERROR: Failed to spawn the player");
+	if (playerPawn)
+	{
 		//setup the player input and events (should build some sort of player controller)
 		auto listener = EventListenerTouchAllAtOnce::create();
 		listener->onTouchesBegan = CC_CALLBACK_2(Pellet::setTargetPosition, playerPawn);
@@ -203,11 +198,19 @@ Pellet* DodgeLevel::spawnPlayer()
 		{
 			playerPawn->getPhysicsBody()->getFirstShape()->setMaterial(PhysicsMaterial(0.f, 0.f, 0.f));
 		}
-
-		return playerPawn;
 	}
-	
-	return nullptr;
+	return playerPawn;
+}
+
+Pellet* DodgeLevel::spawnUnit(Pellet* newUnit, cocos2d::Vec2 position)
+{
+	Node *playerLayer = getChildByTag(TAG_GAME_LAYER_PLAYER);
+	if (newUnit)
+	{
+		newUnit->setPosition(position);
+		playerLayer->addChild(newUnit);
+	}
+	return newUnit;
 }
 
 Pellet* DodgeLevel::findPlayerPawn() const

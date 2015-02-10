@@ -19,6 +19,11 @@ Pellet* Pellet::create()
 	}
 }
 
+Pellet* Pellet::clone() const
+{
+	return Pellet::create();
+}
+
 bool Pellet::initWithFile(const std::string& filename)
 {
 	//try to initialize the sprite
@@ -61,20 +66,27 @@ void Pellet::update(float deltaTime)
 	auto myPhysicsBody = getPhysicsBody();
 	if (myPhysicsBody && myPhysicsBody->isEnabled())
 	{
+		myPhysicsBody->resetForces();
+		//are we the player pawn and have input?
 		if (touchPosition.x != PELLET_NOTARGETX && touchPosition.y != PELLET_NOTARGETY)
 		{
-			myPhysicsBody->resetForces();
-			
-			Vec2 velocity = touchPosition - getPosition();
+			moveDirection = touchPosition - getPosition();
 			float myRadius = getContentSize().width*getScale()/2;
 			//ensure we are touching outside the pellet to avoid back/forw movement
-			if (velocity.length() <= myRadius) myPhysicsBody->setVelocity(Vec2::ZERO);
-			else
+			if (moveDirection.length() <= myRadius)
 			{
-				velocity = velocity.getNormalized()*moveSpeed - myPhysicsBody->getVelocity();
-				Vec2 newForce = myPhysicsBody->getMass()*velocity / deltaTime;
-				myPhysicsBody->applyForce(newForce);
-			}			
+				myPhysicsBody->setVelocity(Vec2::ZERO);
+				moveDirection == Vec2::ZERO;
+			}
+		}
+		//apply the moveDirection
+		if (moveDirection != Vec2::ZERO)
+		{
+			Vec2 velocity = moveDirection.getNormalized()*moveSpeed - myPhysicsBody->getVelocity();
+			Vec2 newForce = myPhysicsBody->getMass()*velocity / deltaTime;
+			myPhysicsBody->applyForce(newForce);
+
+			moveDirection = Vec2::ZERO;
 		}
 	}
 }
@@ -112,7 +124,13 @@ void Pellet::clearTargetPosition(const std::vector<cocos2d::Touch*>& touches, co
 	auto myPhysicsBody = getPhysicsBody();
 	if (myPhysicsBody)
 	{
+		moveDirection = Vec2::ZERO;
 		myPhysicsBody->resetForces();
 		myPhysicsBody->setVelocity(Vec2::ZERO);
 	}
+}
+
+void Pellet::SetMovementDirection(cocos2d::Vec2 newDirection)
+{
+	moveDirection = newDirection;
 }

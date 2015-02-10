@@ -3,6 +3,7 @@
 
 #include "cocos2d.h"
 #include "Pellet.h"
+#include "object_tags.h"
 
 class DodgeLevel : public cocos2d::Scene
 {
@@ -14,6 +15,8 @@ public:
 	static cocos2d::Vec2 editorToGameCoordinateTransform(const cocos2d::Vec2& positionInEditor, const cocos2d::Vec2& levelSizeInEditor);
 	Pellet* spawnPlayer();
 	Pellet* findPlayerPawn() const;
+
+	Pellet* spawnUnit(Pellet* newUnit, cocos2d::Vec2 position);
 	
 CC_CONSTRUCTOR_ACCESS:
 	Scene* loadSceneFromFile(const std::string& filename);

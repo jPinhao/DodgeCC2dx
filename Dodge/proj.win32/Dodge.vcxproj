@@ -143,6 +143,7 @@ xcopy /Y /Q "$(EngineRoot)external\websockets\prebuilt\win32\*.*" "$(OutDir)"</C
     <ClCompile Include="..\Classes\LevelManager.cpp" />
     <ClCompile Include="..\Classes\Pellet.cpp" />
     <ClCompile Include="..\Classes\SpawnComponent.cpp" />
+    <ClCompile Include="..\Classes\SpawnVolume.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
