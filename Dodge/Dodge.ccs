@@ -6,9 +6,10 @@
         <Project Name="level_square.csd" />
         <Image Name="Dot.png" />
         <File Name="Marker Felt.ttf" />
-        <Project Name="level_hexagon.csd" />
         <Image Name="dodge_background.png" />
         <Image Name="dodge_wall.png" />
+        <Project Name="level_test.csd" />
+        <Project Name="level_hexagon.csd" />
       </RootFolder>
     </Group>
   </SolutionFolder>

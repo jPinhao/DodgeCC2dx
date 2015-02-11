@@ -1,11 +1,12 @@
 #include "SpawnVolume.h"
+#include "SpawnController.h"
 
 //function definitions
 SpawnVolume::SpawnVolume()
 	:super(),
 	volumeSprite(nullptr),
 	spawnDirection(DEFAULT_SPAWNDIR),
-	spawnRate(DEFAULT_SPAWNRATE)
+	myController(nullptr)
 {
 
 }
@@ -13,6 +14,8 @@ SpawnVolume::SpawnVolume()
 SpawnVolume::~SpawnVolume()
 {
 	spawnUnitType->release();
+	//make sure we're unregistered
+	unregisterWithController();
 	super::~super();
 }
 
@@ -148,14 +151,12 @@ void SpawnVolume::onEnter()
 {
 	super::onEnter();
 
-	nextSpawn = INITIAL_SPAWNDELAY;
-	scheduleUpdate();
-
 	//resize spawnArea to fit within other PelletSpawners and force spawning inside the box
 	Vec2 worldCentre, extent, extentUp, rotatedExtent, rotatedExtentUp;
 	//these 2 are used later to mody the spawn area so the spawned objects don't overlap spawner/blocking objects
-	Vec2 spawnUnitExtent = Vec2(spawnUnitType->getContentSize().width*spawnUnitType->getScaleX(), 0.f)/2;
-	Vec2 spawnUnitExtentUp = Vec2(0.f,spawnUnitType->getContentSize().height*spawnUnitType->getScaleY())/2;
+	//add a couple of units to actual extent so a collision doesn't get immedeately triggeres when spawned
+	Vec2 spawnUnitExtent = Vec2(spawnUnitType->getContentSize().width*spawnUnitType->getScaleX() +2.f, 0.f) / 2;
+	Vec2 spawnUnitExtentUp = Vec2(0.f, spawnUnitType->getContentSize().height*spawnUnitType->getScaleY() + 2.f) / 2;
 	spawnUnitExtent = spawnUnitExtent.rotateByAngle(Vec2::ZERO, CC_DEGREES_TO_RADIANS(-volumeSprite->getRotation()));
 	spawnUnitExtentUp = spawnUnitExtentUp.rotateByAngle(Vec2::ZERO, CC_DEGREES_TO_RADIANS(-volumeSprite->getRotation()));
 
@@ -211,16 +212,8 @@ void SpawnVolume::onEnter()
 	spawnAreaCentre = (negEdge1 - spawnAreaExtentForward) - worldCentre + getContentSize() / 2;
 	spawnAreaExtentUp = rotatedExtentUp + spawnUnitExtentUp;
 
-	////register ourselves into the spawncontroller
-	//if (bCanEverSpawn)
-	//{
-	//	ADodgeGameMode *gameMode = Cast<ADodgeGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
-	//	if (gameMode)
-	//	{
-	//		ASpawnController *controller = gameMode->GetSpawnController();
-	//		controller->RegisterSpawner(this);
-	//	}
-	//}
+	//register ourselves into the spawncontroller
+	registerWithController();
 
 
 	//////////////////////////////////////////////////
@@ -264,19 +257,35 @@ bool SpawnVolume::FindSpawnAreaEdge(PhysicsWorld& world, const PhysicsRayCastInf
 	return true;
 }
 
-
-//onUpdate, check if it's tiem to spawn again
-void SpawnVolume::update(float deltaTime)
+void SpawnVolume::onExit()
 {
-	nextSpawn -= deltaTime;
-	if (nextSpawn <= 0.f)
+	super::onExit();
+	unregisterWithController();
+}
+
+void SpawnVolume::registerWithController()
+{
+	DodgeLevel *level = LevelManager::getInstance()->getCurrentLevel();
+	if (level)
 	{
-		nextSpawn = spawnRate;
-		if (getParent()->getChildren().at(0) == this)
+		SpawnController *findController = level->findControllerForSpawner(this);
+		//do we think we're already registered with someone?
+		if (myController)
 		{
-			spawnUnit();
+			if (findController != myController) myController->unregisterSpawner(this);
+		}
+		//register with the new controller
+		myController = findController;
+		if (myController)
+		{
+			myController->registerSpawner(this);
 		}
 	}
+}
+
+void SpawnVolume::unregisterWithController()
+{
+	if (myController) myController->unregisterSpawner(this);
 }
 
 void SpawnVolume::spawnUnit()

@@ -4,6 +4,8 @@
 #include "cocos2d.h"
 #include "DodgeLevel.h"
 
+class DodgeLevel;
+
 class LevelManager //: public cocos2d::Ref
 {
 public:

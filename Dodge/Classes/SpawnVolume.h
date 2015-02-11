@@ -1,15 +1,17 @@
-#ifndef __PELLETSPAWNER_H__
-#define __PELLETSPAWNER_H__
+#ifndef __SPAWNVOLUME_H__
+#define __SPAWNVOLUME_H__
 
 #include "cocos2d.h"
 #include "Pellet.h"
+#include "SpawnController.h"
 #include "LevelManager.h"
 
 USING_NS_CC;
 
 #define DEFAULT_SPAWNDIR Vec2(0.f,-1.f)
-#define DEFAULT_SPAWNRATE 2.f
-#define INITIAL_SPAWNDELAY 2.f
+
+//forward declaration
+class SpawnController;
 
 // Node that can spawn new Entities
 class SpawnVolume : public cocos2d::Node
@@ -31,8 +33,7 @@ public:
 	void setSpawnDirection(const cocos2d::Vec2& direction);
 
 	virtual void onEnter() override;
-	//virtual void onExit() override;
-	virtual void update(float deltaTime) override;
+	virtual void onExit() override;
 
 	void spawnUnit();
 
@@ -48,16 +49,20 @@ private:
 	void updatePhysicsBodyShape();
 	bool FindSpawnAreaEdge(PhysicsWorld& world, const PhysicsRayCastInfo& info, void* data);
 
+	void registerWithController();
+	void unregisterWithController();
+
 	cocos2d::Sprite* volumeSprite;
 	cocos2d::Vec2 volumeCentre;
 	//these should be set in the order { BL,TL,TR,BR }
 	cocos2d::Vec2 collisionVertices[4];
 	VolumeCollision myCollisionType;
 	
+	//pointer to our controller, so we can remove ourselves
+	SpawnController *myController;
+
 	//Spawning attributes
 	Pellet *spawnUnitType;
-	float spawnRate;
-	float nextSpawn;
 	//this is the direction from which new entities are spawned (relative to sprite (or volume). If 0,0 then we spawn from anywhere in SpawnArea)
 	cocos2d::Vec2 spawnDirection;
 	//centre point of the SpawnArea

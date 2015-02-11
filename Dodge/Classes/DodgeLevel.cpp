@@ -91,6 +91,11 @@ void DodgeLevel::processLevelActors(Node *processRoot)
 	Node *playerLayer = getChildByTag(TAG_GAME_LAYER_PLAYER);
 	Node *ui = getChildByTag(TAG_GAME_LAYER_UI);
 
+	Node *spawnController = SpawnController::create();
+	spawnController->setTag(TAG_EDITOR_SPAWNCONTROLLER);
+	scenery->addChild(spawnController);
+	if (!spawnController) spawnController = scenery;
+
 	Vector<Node*> children = processRoot->getChildren();
 	processRoot->removeAllChildrenWithCleanup(false);
 	Vec2 levelSizeEditor = processRoot->getContentSize();
@@ -101,7 +106,7 @@ void DodgeLevel::processLevelActors(Node *processRoot)
 		actor->setPosition(inGamePosition);
 		switch (actor->getTag())
 		{
-			case TAG_EDITOR_WALL:
+			case TAG_EDITOR_SPAWNER:
 			{
 				float rotation = actor->getRotationSkewX();
 				float scaleX = actor->getScaleX();
@@ -113,7 +118,7 @@ void DodgeLevel::processLevelActors(Node *processRoot)
 					actor->setRotation(rotation);
 					SpawnVolume *spawnVolume = SpawnVolume::createWithSprite(*Pellet::create(),static_cast<Sprite*>(actor));
 					spawnVolume->setPosition(inGamePosition);
-					scenery->addChild(spawnVolume);
+					spawnController->addChild(spawnVolume);
 				}
 
 				break;
@@ -140,7 +145,7 @@ void DodgeLevel::processLevelActors(Node *processRoot)
 				background->addChild(actor);
 				break;
 			}
-			case TAG_EDITOR_SPAWN:
+			case TAG_EDITOR_PLAYER_SPAWNPOINT:
 			{
 				defaultSpawnPoint = actor->getPosition();
 				break;
@@ -186,12 +191,8 @@ Pellet* DodgeLevel::spawnPlayer()
 		listener->onTouchesEnded = CC_CALLBACK_2(Pellet::clearTargetPosition, playerPawn);
 		listener->onTouchesCancelled = CC_CALLBACK_2(Pellet::clearTargetPosition, playerPawn);
 
-		auto contactListener = EventListenerPhysicsContact::create();
-		contactListener->onContactBegin = CC_CALLBACK_1(Pellet::onContactBegin, playerPawn);
-
 		auto dispatcher = playerPawn->getEventDispatcher();
 		dispatcher->addEventListenerWithSceneGraphPriority(listener, playerPawn);
-		dispatcher->addEventListenerWithSceneGraphPriority(contactListener, playerPawn);
 
 		//also disable restitution on the Player pellet, we shouldn't be bouncy like the others
 		if (playerPawn->getPhysicsBody())
@@ -223,6 +224,22 @@ Pellet* DodgeLevel::findPlayerPawn() const
 		{
 			return dynamic_cast<Pellet*>(playerNode);
 		}
+	}
+	return nullptr;
+}
+
+SpawnController* DodgeLevel::findControllerForSpawner(SpawnVolume* spawner) const
+{
+	Node *parent = spawner->getParent();
+	while (parent)
+	{
+		if (parent->getTag() == TAG_EDITOR_SPAWNCONTROLLER)
+		{
+			SpawnController *foundController = dynamic_cast<SpawnController*>(parent);
+			CCASSERT(foundController, "ERROR: found a node with tag=TAG_EDITOR_SPAWNCONTROLLER which isn't of type SpawnController");
+			if (foundController) return foundController;
+		}
+		parent = parent->getParent();
 	}
 	return nullptr;
 }

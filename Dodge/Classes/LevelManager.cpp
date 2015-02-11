@@ -21,6 +21,8 @@ bool LevelManager::initializeLevels()
 	allLevels[0]->retain();
 	allLevels.push_back(DodgeLevel::createFromFile("level_hexagon.csb"));
 	allLevels[1]->retain();
+	allLevels.push_back(DodgeLevel::createFromFile("level_test.csb"));
+	allLevels[2]->retain();
 
 	return true;
 }
@@ -51,7 +53,6 @@ bool LevelManager::isLevelAvailable(UINT index)
 	{
 		return true;
 	}
-	
 	return false;
 }
 
@@ -84,6 +85,7 @@ void LevelManager::switchLevel(DodgeLevel *newLevel)
 
 
 LevelManager::LevelManager()
+	: mainMenu(nullptr)
 {
 }
 

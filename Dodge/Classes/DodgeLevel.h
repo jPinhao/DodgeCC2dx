@@ -3,7 +3,12 @@
 
 #include "cocos2d.h"
 #include "Pellet.h"
+#include "SpawnController.h"
 #include "object_tags.h"
+
+class LevelManager;
+class SpawnController;
+class SpawnVolume;
 
 class DodgeLevel : public cocos2d::Scene
 {
@@ -18,6 +23,8 @@ public:
 
 	Pellet* spawnUnit(Pellet* newUnit, cocos2d::Vec2 position);
 	
+	SpawnController* findControllerForSpawner(SpawnVolume* spawner) const;
+
 CC_CONSTRUCTOR_ACCESS:
 	Scene* loadSceneFromFile(const std::string& filename);
 	bool initWithFile(const std::string& filename);
