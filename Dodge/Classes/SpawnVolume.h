@@ -14,7 +14,7 @@ USING_NS_CC;
 class SpawnController;
 
 // Node that can spawn new Entities
-class SpawnVolume : public cocos2d::Node
+class SpawnVolume : public Pawn
 {
 public:
 
@@ -35,6 +35,7 @@ public:
 	virtual void onEnter() override;
 	virtual void onExit() override;
 
+	void controlledUpdate() override;
 	void spawnUnit();
 
 CC_CONSTRUCTOR_ACCESS:
@@ -43,7 +44,7 @@ CC_CONSTRUCTOR_ACCESS:
 	bool initWithSprite(const Pellet& unitsToSpawn, cocos2d::Sprite *sprite, VolumeCollision collisionType);
 
 private:
-	typedef cocos2d::Node super;
+	typedef Pawn super;
 
 	void resizeToFit();
 	void updatePhysicsBodyShape();

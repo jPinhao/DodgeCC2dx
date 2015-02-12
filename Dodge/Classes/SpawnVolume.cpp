@@ -270,22 +270,27 @@ void SpawnVolume::registerWithController()
 	{
 		SpawnController *findController = level->findControllerForSpawner(this);
 		//do we think we're already registered with someone?
-		if (myController)
+		if (myController != findController)
 		{
-			if (findController != myController) myController->unregisterSpawner(this);
-		}
-		//register with the new controller
-		myController = findController;
-		if (myController)
-		{
-			myController->registerSpawner(this);
+			unregisterWithController();
+			//register with the new controller
+			myController = findController;
+			if (myController)
+			{
+				myController->registerPawn(this);
+			}
 		}
 	}
 }
 
 void SpawnVolume::unregisterWithController()
 {
-	if (myController) myController->unregisterSpawner(this);
+	if (myController) myController->unregisterPawn(this);
+}
+
+void SpawnVolume::controlledUpdate()
+{
+	spawnUnit();
 }
 
 void SpawnVolume::spawnUnit()
