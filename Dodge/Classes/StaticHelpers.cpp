@@ -1,8 +1,25 @@
-#include "AnimationLoader.h"
+#include "StaticHelpers.h"
 
 USING_NS_CC;
 
-void AnimationLoader::PrepareAnimation(const std::string& framesFileName, float animDuration, Texture2D* originalSprite)
+//find who owns a given Physics Shape
+Node* MyHelpers::getPhysShapeOwner(const PhysicsShape* shape)
+{
+	Node* retNode = nullptr;
+	PhysicsBody* physBody = nullptr;
+	if (shape)
+	{
+		physBody = shape->getBody();
+		if (physBody)
+		{
+			retNode = physBody->getNode();
+		}
+	}
+	return retNode;
+}
+
+//generate and cache an anim
+void MyHelpers::PrepareAnimation(const std::string& framesFileName, float animDuration, Texture2D* originalSprite)
 {
 	AnimationCache *cache = AnimationCache::getInstance();
 	//check if we have the anim already cached

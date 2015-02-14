@@ -1,5 +1,6 @@
 #include "Pellet.h"
 #include "SpawnComponent.h"
+#include "StaticHelpers.h"
 
 USING_NS_CC;
 
@@ -32,8 +33,6 @@ bool Pellet::initWithFile(const std::string& filename)
 		return false;
 	}
 	
-	//anchor point mid
-	setAnchorPoint(Vec2(.5f, .5f));
 	//initialize touPOsition for follow touch code
 	touchPosition.set(PELLET_NOTARGETX, PELLET_NOTARGETY);
 	//prepare spawn component
@@ -52,9 +51,13 @@ bool Pellet::initWithFile(const std::string& filename)
 		//start as disabled until we've fully spawned
 		pelletBody->setEnable(false);
 		pelletBody->setContactTestBitmask(0xFFFFFFFF);
-		/*auto contactListener = EventListenerPhysicsContact::create();
+
+		//setup the contact listener
+		auto contactListener = EventListenerPhysicsContact::create();
 		contactListener->onContactBegin = CC_CALLBACK_1(Pellet::onContactBegin, this);
-		getEventDispatcher()->addEventListenerWithSceneGraphPriority(contactListener, this);*/
+		contactListener->onContactPostSolve = CC_CALLBACK_2(Pellet::onContactPostSolve, this);
+		getEventDispatcher()->addEventListenerWithSceneGraphPriority(contactListener, this);
+
 		return true;
 	}
 
@@ -91,10 +94,62 @@ void Pellet::update(float deltaTime)
 	}
 }
 
-//collision
+
+// check if this is a player vs other pellet to kill the player and ignore collision
 bool Pellet::onContactBegin(cocos2d::PhysicsContact &contact)
 {
+	Node *actor1 = MyHelpers::getPhysShapeOwner(contact.getShapeA());
+	Node *actor2 = MyHelpers::getPhysShapeOwner(contact.getShapeB());
+	Node *otherActor = nullptr;
+
+	// this get's called on any contact for every PhysicsListener, so we need to check if we are indeed one of the colliding entities....
+	if (actor1 == this) otherActor = actor2;
+	else if (actor2 == this) otherActor = actor1;
+	else return true;
+	
+	if (otherActor->isRunning() && this->isRunning())
+	{
+		//did we collide with another pellet?
+		Pellet* otherPellet = dynamic_cast<Pellet*>(otherActor);
+		if (otherPellet)
+		{
+			if (this->isPlayerPawn())
+			{
+				//oh no, we be dead!
+				this->removeFromParent();
+				return false;
+			}
+			//we just collided with the player, ignore, other pellet will destroy itself and we don't collide
+			else if (otherPellet->isPlayerPawn())
+			{
+				return false;
+			}
+		}
+	}
+	//one of the pellets is bound to be removed, do nothing
+	else return false;
+	
+	//all good, we can proceed with the colision
 	return true;
+}
+
+// ensure pellet exits collision with the correct speed
+void Pellet::onContactPostSolve(cocos2d::PhysicsContact& contact, const cocos2d::PhysicsContactPostSolve& solve)
+{
+	Node *me = MyHelpers::getPhysShapeOwner(contact.getShapeA());
+	if (this != me) me = MyHelpers::getPhysShapeOwner(contact.getShapeB());
+	if (this != me) return;
+
+	Vec2 newVelocity = getPhysicsBody()->getVelocity();
+	if (newVelocity.length() != moveSpeed) SetMovementDirection(newVelocity);
+}
+
+bool Pellet::isPlayerPawn() const
+{
+	//temp hack to check if player
+	float restitution = getPhysicsBody()->getFirstShape()->getRestitution();
+	if (restitution == 0.f) return true;
+	else return false;
 }
 
 //onTouch triggers

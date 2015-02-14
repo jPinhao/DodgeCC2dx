@@ -21,11 +21,12 @@ public:
 	// frame update 
 	void update(float deltaTime) override;
 
-	// OnColide event
+	// check if this is a player vs other pellet to kill the player and ignore collision
 	bool onContactBegin(cocos2d::PhysicsContact &contact);
+	// ensure pellet exits collision with the correct speed
+	void onContactPostSolve(cocos2d::PhysicsContact& contact, const cocos2d::PhysicsContactPostSolve& solve);
 
-	//void ChaseTarget(float deltaTime);
-	//bool CanChase();
+	bool isPlayerPawn() const;
 	//bool IsSpawning();
 
 	void setTargetPosition(const std::vector<cocos2d::Touch*>& touches, cocos2d::Event* event);
