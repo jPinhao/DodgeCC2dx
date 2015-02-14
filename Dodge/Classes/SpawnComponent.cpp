@@ -1,5 +1,5 @@
 #include "SpawnComponent.h"
-#include "AnimationLoader.h"
+#include "StaticHelpers.h"
 
 USING_NS_CC;
 
@@ -50,6 +50,7 @@ void SpawnComponent::BeginSpawn()
 	owner->runAction(Sequence::create(spawnSequence));
 	//disable any physics and updates until we're done
 	if (owner->getPhysicsBody()) owner->getPhysicsBody()->setEnable(false);
+	//owner->pause();
 	owner->unscheduleUpdate();
 
 	//flag us as spawning
@@ -60,6 +61,7 @@ void SpawnComponent::FinishSpawn()
 {
 	Node *owner = getOwner();
 	if (owner->getPhysicsBody()) owner->getPhysicsBody()->setEnable(true);
+	//owner->resume();
 	owner->scheduleUpdate();
 
 	//flag us as done spawning
@@ -112,14 +114,14 @@ void SpawnComponent::setSpawnAnim(const std::string& animFile, float animDuratio
 {
 	spawnAnimName = animFile;
 	spawnLength = MAX(0, animDuration);
-	AnimationLoader::PrepareAnimation(animFile, spawnLength, ownerTexture);
+	MyHelpers::PrepareAnimation(animFile, spawnLength, ownerTexture);
 }
 
 void SpawnComponent::setDespawnAnim(const std::string& animFile, float animDuration, Texture2D* ownerTexture)
 {
 	despawnAnimName = animFile;
 	despawnLength = MAX(0, animDuration);
-	AnimationLoader::PrepareAnimation(animFile, despawnLength, ownerTexture);
+	MyHelpers::PrepareAnimation(animFile, despawnLength, ownerTexture);
 }
 
 bool SpawnComponent::isOwnerSpawning()
