@@ -3,33 +3,44 @@
 
 #include "Controller.h"
 
+/*
+Multiple entity controller
+MultiController can take posession of deveral pawns and manage their updates, initialization, provide player/AI controls
+*/
 class MultiController : public Controller
 {
 public:
 	enum class MultiControllerUpdate
 	{
+		//each tick we pick a new Pawn to update sequentially
 		SEQUENTIAL_SELECTOR,
+		//each tick we pick a new Pawn to update randomly
 		RAND_SELECTOR,
+		//each tick we update all Pawns
 		ALL_PARALLEL
 	};
 
+	//controllerUpdateType defines how update() picks the next Pawn to update
 	static MultiController* create(MultiControllerUpdate controllerUpdateType = MultiControllerUpdate::RAND_SELECTOR);
-	
-	//update() ticks down our spawn timer and decides whether it's time to spawn
+
+	//update() should trigger the next update on a/several pawn depedning on the updateType 
 	virtual void update(float deltaTime) override;
-	//add a new spawner to this manager
+	//add a new pawn to this manager
 	void registerPawn(Pawn* pawn) override;
-	//remove a spawner from this manager
+	//remove a pawn from this manager
 	void unregisterPawn(Pawn* pawn) override;
 	//is controlling anyone?
 	bool isControlling() override;
 
 CC_CONSTRUCTOR_ACCESS:
+	//controllerUpdateType defines how update() picks the next Pawn to update
 	bool init(MultiControllerUpdate controllerUpdateType);
 	MultiController();
 	~MultiController();
 
+	//defines how update() picks the next Pawn to update, see MultiControllerUpdate for details
 	MultiControllerUpdate updateType;
+	//which pawn was last updated
 	unsigned int previousUpdatePawn;
 
 	std::vector<Pawn*> allPawns;

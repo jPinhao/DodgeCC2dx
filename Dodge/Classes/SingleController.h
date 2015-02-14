@@ -4,16 +4,20 @@
 #include "cocos2d.h"
 #include "Controller.h"
 
+/*
+Single entity controller
+SingleController can take posession of a pawn and manage its updates, initialization, provide player/AI controls
+*/
 class SingleController : public Controller
 {
 public:
 	static SingleController* create();
-	
-	//update() ticks down our spawn timer and decides whether it's time to spawn
+
+	//update() should trigger the next update on the pawn(s
 	virtual void update(float deltaTime) override;
-	//add a new spawner to this manager
+	//change the Pawn we're controlliing
 	void registerPawn(Pawn* myPawn) override;
-	//remove a spawner from this manager
+	//stop controlling this pawn
 	void unregisterPawn(Pawn* myPawn) override;
 	//is controlling anyone?
 	bool isControlling() override;
@@ -23,6 +27,7 @@ CC_CONSTRUCTOR_ACCESS:
 	SingleController();
 	~SingleController();
 
+	//who are we controlling
 	Pawn *myPawn;
 
 private:
