@@ -15,8 +15,8 @@ public:
 	void BeginDespawn();
 	void FinishDespawn();
 	
-	void setSpawnAnim(const std::string& animFile,float time,cocos2d::Texture2D* ownerTexture);
-	void setDespawnAnim(const std::string& animFile, float time, cocos2d::Texture2D* ownerTexture);
+	void setSpawnAnim(const std::string& animFile, float time, cocos2d::Sprite* targetSprite);
+	void setDespawnAnim(const std::string& animFile, float time, cocos2d::Sprite* targetSprite);
 
 	bool isOwnerSpawning();
 	float getSpawnLength();
@@ -41,6 +41,8 @@ private:
 	std::function<void()> postSpawnExtraSetup;
 	//any extra setup required before the holding Node gets destroyed
 	std::function<void()> preDespawnExtraSetup;
+
+	cocos2d::Sprite *animTargetSprite;
 
 	bool isSpawning;
 	float spawnLength;

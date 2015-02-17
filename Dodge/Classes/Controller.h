@@ -31,7 +31,7 @@ public:
 
 CC_CONSTRUCTOR_ACCESS:
 	Controller() : super(){};
-
+	virtual bool init();
 	//start the updates
 	virtual void startController();
 	//stop the updates

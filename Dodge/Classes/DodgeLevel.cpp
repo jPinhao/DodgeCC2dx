@@ -91,10 +91,9 @@ void DodgeLevel::processLevelActors(Node *processRoot)
 	Node *playerLayer = getChildByTag(TAG_GAME_LAYER_PLAYER);
 	Node *ui = getChildByTag(TAG_GAME_LAYER_UI);
 
-	Node *spawnController = SpawnController::create();
+	SpawnController *spawnController = SpawnController::create();
 	spawnController->setTag(TAG_EDITOR_SPAWNCONTROLLER);
-	scenery->addChild(spawnController);
-	if (!spawnController) spawnController = scenery;
+	background->addChild(spawnController);
 
 	Vector<Node*> children = processRoot->getChildren();
 	processRoot->removeAllChildrenWithCleanup(false);
@@ -116,9 +115,9 @@ void DodgeLevel::processLevelActors(Node *processRoot)
 				{
 					actor->setScaleX(scaleX);
 					actor->setRotation(rotation);
-					SpawnVolume *spawnVolume = SpawnVolume::createWithSprite(*Pellet::create(),static_cast<Sprite*>(actor));
+					SpawnVolume *spawnVolume = SpawnVolume::createWithSprite(*Pellet::create(), static_cast<Sprite*>(actor), spawnController);
 					spawnVolume->setPosition(inGamePosition);
-					spawnController->addChild(spawnVolume);
+					scenery->addChild(spawnVolume);
 				}
 
 				break;
@@ -161,7 +160,7 @@ void DodgeLevel::processLevelActors(Node *processRoot)
 void DodgeLevel::onEnter()
 {
 	super::onEnter();
-	Pellet *playerPawn = spawnPlayer();
+	Pawn *playerPawn = spawnPlayer();
 	CCASSERT(playerPawn, "ERROR: tried to start a level but couldn't spawn the player");
 }
 
@@ -172,13 +171,13 @@ void DodgeLevel::onExit()
 	if (player) removeChild(player);
 }
 
-Pellet* DodgeLevel::spawnPlayer()
+Pawn* DodgeLevel::spawnPlayer()
 {
-	Pellet *playerPawn = findPlayerPawn();
+	Pawn *playerPawn = findPlayerPawn();
 	CCASSERT(playerPawn == nullptr, "ERROR: Trying to spawn the player when a pawn is already in place");
 	if (!playerPawn)
 	{
-		playerPawn = spawnUnit(Pellet::create(),defaultSpawnPoint);
+		playerPawn = spawnUnit(Pellet::create(), defaultSpawnPoint);
 	}
 
 	CCASSERT(!(playerPawn == nullptr), "ERROR: Failed to spawn the player");
@@ -186,10 +185,10 @@ Pellet* DodgeLevel::spawnPlayer()
 	{
 		//setup the player input and events (should build some sort of player controller)
 		auto listener = EventListenerTouchAllAtOnce::create();
-		listener->onTouchesBegan = CC_CALLBACK_2(Pellet::setTargetPosition, playerPawn);
-		listener->onTouchesMoved = CC_CALLBACK_2(Pellet::setTargetPosition, playerPawn);
-		listener->onTouchesEnded = CC_CALLBACK_2(Pellet::clearTargetPosition, playerPawn);
-		listener->onTouchesCancelled = CC_CALLBACK_2(Pellet::clearTargetPosition, playerPawn);
+		listener->onTouchesBegan = CC_CALLBACK_2(Pellet::setTargetPosition, dynamic_cast<Pellet*>(playerPawn));
+		listener->onTouchesMoved = CC_CALLBACK_2(Pellet::setTargetPosition, dynamic_cast<Pellet*>(playerPawn));
+		listener->onTouchesEnded = CC_CALLBACK_2(Pellet::clearTargetPosition, dynamic_cast<Pellet*>(playerPawn));
+		listener->onTouchesCancelled = CC_CALLBACK_2(Pellet::clearTargetPosition, dynamic_cast<Pellet*>(playerPawn));
 
 		auto dispatcher = playerPawn->getEventDispatcher();
 		dispatcher->addEventListenerWithSceneGraphPriority(listener, playerPawn);
@@ -203,7 +202,7 @@ Pellet* DodgeLevel::spawnPlayer()
 	return playerPawn;
 }
 
-Pellet* DodgeLevel::spawnUnit(Pellet* newUnit, cocos2d::Vec2 position)
+Pawn* DodgeLevel::spawnUnit(Pawn* newUnit, cocos2d::Vec2 position)
 {
 	Node *playerLayer = getChildByTag(TAG_GAME_LAYER_PLAYER);
 	if (newUnit)
@@ -214,7 +213,7 @@ Pellet* DodgeLevel::spawnUnit(Pellet* newUnit, cocos2d::Vec2 position)
 	return newUnit;
 }
 
-Pellet* DodgeLevel::findPlayerPawn() const
+Pawn* DodgeLevel::findPlayerPawn() const
 {
 	Node *playerLayer = getChildByTag(TAG_GAME_LAYER_PLAYER);
 	if (playerLayer)
@@ -222,24 +221,17 @@ Pellet* DodgeLevel::findPlayerPawn() const
 		Node *playerNode = playerLayer->getChildByTag(TAG_GAME_PLAYERPAWN);
 		if (playerNode)
 		{
-			return dynamic_cast<Pellet*>(playerNode);
+			return dynamic_cast<Pawn*>(playerNode);
 		}
 	}
 	return nullptr;
 }
 
-SpawnController* DodgeLevel::findControllerForSpawner(SpawnVolume* spawner) const
+void DodgeLevel::addController(Controller* controller)
 {
-	Node *parent = spawner->getParent();
-	while (parent)
+	Node *controllerLayer = getChildByTag(TAG_GAME_LAYER_BACKGROUND);
+	if (controllerLayer)
 	{
-		if (parent->getTag() == TAG_EDITOR_SPAWNCONTROLLER)
-		{
-			SpawnController *foundController = dynamic_cast<SpawnController*>(parent);
-			CCASSERT(foundController, "ERROR: found a node with tag=TAG_EDITOR_SPAWNCONTROLLER which isn't of type SpawnController");
-			if (foundController) return foundController;
-		}
-		parent = parent->getParent();
+		controllerLayer->addChild(controller);
 	}
-	return nullptr;
 }

@@ -23,7 +23,6 @@ public:
 	bool isControlling() override;
 
 CC_CONSTRUCTOR_ACCESS:
-	bool init();
 	SingleController();
 	~SingleController();
 

@@ -18,6 +18,7 @@ MultiController* MultiController::create(MultiControllerUpdate controllerUpdateT
 
 bool MultiController::init(MultiControllerUpdate controllerUpdateType)
 {
+	super::init();
 	updateType = controllerUpdateType;
 	return true;
 }

@@ -4,9 +4,7 @@
 //function definitions
 SpawnVolume::SpawnVolume()
 	:super(),
-	volumeSprite(nullptr),
-	spawnDirection(DEFAULT_SPAWNDIR),
-	myController(nullptr)
+	spawnDirection(DEFAULT_SPAWNDIR)
 {
 
 }
@@ -14,15 +12,13 @@ SpawnVolume::SpawnVolume()
 SpawnVolume::~SpawnVolume()
 {
 	spawnUnitType->release();
-	//make sure we're unregistered
-	unregisterWithController();
 	super::~super();
 }
 
-SpawnVolume* SpawnVolume::create(const Pellet& unitsToSpawn,VolumeCollision collisionType/* = VolumeCollision::COLLISION_NONE*/)
+SpawnVolume* SpawnVolume::create(const Pawn& unitsToSpawn, SpawnController *controller)
 {
 	SpawnVolume *ret = new (std::nothrow) SpawnVolume();
-	if (ret != nullptr && ret->initWithSprite(unitsToSpawn,nullptr, collisionType))
+	if (ret != nullptr && ret->initWithSprite(unitsToSpawn, nullptr, controller))
 	{
 		ret->autorelease();
 	}
@@ -33,10 +29,10 @@ SpawnVolume* SpawnVolume::create(const Pellet& unitsToSpawn,VolumeCollision coll
 	return ret;
 }
 
-SpawnVolume* SpawnVolume::createWithSprite(const Pellet& unitsToSpawn,Sprite *sprite, VolumeCollision collisionType/* = VolumeCollision::COLLISION_SPRITE*/)
+SpawnVolume* SpawnVolume::createWithSprite(const Pawn& unitsToSpawn, Sprite *sprite, SpawnController *controller)
 {
 	SpawnVolume *ret = new (std::nothrow) SpawnVolume();
-	if (ret != nullptr && ret->initWithSprite(unitsToSpawn,sprite, collisionType))
+	if (ret != nullptr && ret->initWithSprite(unitsToSpawn, sprite, controller))
 	{
 		ret->autorelease();
 	}
@@ -47,103 +43,20 @@ SpawnVolume* SpawnVolume::createWithSprite(const Pellet& unitsToSpawn,Sprite *sp
 	return ret;
 }
 
-bool SpawnVolume::initWithSprite(const Pellet& unitsToSpawn,cocos2d::Sprite *sprite, VolumeCollision collisionType)
+bool SpawnVolume::initWithSprite(const Pawn& unitsToSpawn, Sprite *sprite, SpawnController *controller)
 {
-	CCASSERT((sprite != nullptr || collisionType != COLLISION_SPRITE), "ERROR: Tried to create a spawn volume without a sprite but collision=sprite- setting to no collision");
 	spawnUnitType = unitsToSpawn.clone();
 	spawnUnitType->retain();
 
-	volumeSprite = sprite;
-	myCollisionType = collisionType;
-
-	PhysicsBody *spawnVolumeBody = PhysicsBody::create();
-	spawnVolumeBody->setDynamic(false);
-	spawnVolumeBody->setContactTestBitmask(0xFFFFFFFF);
-	setPhysicsBody(spawnVolumeBody);
-
-	if (volumeSprite)
+	if (sprite)
 	{
-		addChild(volumeSprite);
-	}
-	else if (myCollisionType == COLLISION_SPRITE)
-	{
-		myCollisionType = COLLISION_NONE;
+		PhysicsBody *spawnVolumeBody = PhysicsBody::create();
+		spawnVolumeBody->setDynamic(false);
+		spawnVolumeBody->setContactTestBitmask(0xFFFFFFFF);
+		setPhysicsBody(spawnVolumeBody);
 	}
 
-	if (myCollisionType == COLLISION_NONE) spawnVolumeBody->setEnable(false);
-
-	resizeToFit();
-	return true;
-}
-
-void SpawnVolume::resizeToFit()
-{
-	if (volumeSprite)
-	{
-		Size spriteSize = Size(volumeSprite->getContentSize().width*volumeSprite->getScaleX(), volumeSprite->getContentSize().height*volumeSprite->getScaleY());
-		Vec2 spriteCentre = Vec2(spriteSize.width, spriteSize.height) / 2;
-		//cocos angles are clockwise.... so need to invert for actual angle fo correct cos/sin
-		float spriteRotation = CC_DEGREES_TO_RADIANS(-volumeSprite->getRotation());
-
-		//rotate the size dimensions so we fit the sprite
-		Size volumeSize;
-		float absCos = abs(cosf(spriteRotation)), absSin = abs(sinf(spriteRotation));
-		volumeSize.width = spriteSize.width*absCos + spriteSize.height*absSin;
-		volumeSize.height = spriteSize.height*absCos + spriteSize.width*absSin;
-		//center the sprite
-		volumeSprite->setAnchorPoint(Vec2(.5f, .5f));
-		volumeSprite->setPosition(.5f * volumeSize.width, .5f * volumeSize.height);
-		//update the volume settings to fit the sprite
-		setContentSize(volumeSize);
-		volumeCentre = Vec2(.5f * volumeSize.width, .5f * volumeSize.height);
-		if (myCollisionType == COLLISION_VOLUME)
-		{
-			Size halfSize = volumeSize / 2;
-			collisionVertices[0] = Vec2(-halfSize.width, -halfSize.height);
-			collisionVertices[1] = Vec2(-halfSize.width, halfSize.height);
-			collisionVertices[2] = Vec2(halfSize.width, halfSize.height);
-			collisionVertices[3] = Vec2(halfSize.width, -halfSize.height);
-		}
-		else
-		{
-			collisionVertices[0] = Vec2(0.f, 0.f);
-			collisionVertices[1] = Vec2(0.f, spriteSize.height);
-			collisionVertices[2] = Vec2(spriteSize.width, spriteSize.height);
-			collisionVertices[3] = Vec2(spriteSize.width, 0.f);
-			//calculate the new collision vertices based on the rotation (used in Physics shape creation)
-			//we don't translate them using the volume centre as the physics shapes are positioned relative to the centre
-			Vec2 rotateV;
-			for (auto& vertex : collisionVertices)
-			{
-				rotateV = vertex - spriteCentre;
-				vertex.x = rotateV.x*cosf(spriteRotation) - rotateV.y*sinf(spriteRotation);
-				vertex.y = rotateV.x*sinf(spriteRotation) + rotateV.y*cosf(spriteRotation);
-			}
-		}
-	}
-	else
-	{
-		Size halfSize = getContentSize() / 2;
-		volumeCentre = halfSize;
-		collisionVertices[0] = Vec2(-halfSize.width, -halfSize.height);
-		collisionVertices[1] = Vec2(-halfSize.width, halfSize.height);
-		collisionVertices[2] = Vec2(halfSize.width, halfSize.height);
-		collisionVertices[3] = Vec2(halfSize.width, -halfSize.height);
-	}
-	updatePhysicsBodyShape();
-}
-
-void SpawnVolume::updatePhysicsBodyShape()
-{
-	PhysicsBody *myBody = getPhysicsBody();
-	if (myBody)
-	{
-		myBody->removeAllShapes();
-		PhysicsShapePolygon *colPolygon = PhysicsShapePolygon::create(&collisionVertices[0], 4,
-			PhysicsMaterial(0.f, 1.f, 0.f));
-		colPolygon->setContactTestBitmask(0xFFFFFFFF);
-		myBody->addShape(colPolygon, false);
-	}
+	return super::initWithController(controller, sprite);
 }
 
 //setup the valid area from which to spawn new units
@@ -157,8 +70,8 @@ void SpawnVolume::onEnter()
 	//add a couple of units to actual extent so a collision doesn't get immedeately triggeres when spawned
 	Vec2 spawnUnitExtent = Vec2(spawnUnitType->getContentSize().width*spawnUnitType->getScaleX() +2.f, 0.f) / 2;
 	Vec2 spawnUnitExtentUp = Vec2(0.f, spawnUnitType->getContentSize().height*spawnUnitType->getScaleY() + 2.f) / 2;
-	spawnUnitExtent = spawnUnitExtent.rotateByAngle(Vec2::ZERO, CC_DEGREES_TO_RADIANS(-volumeSprite->getRotation()));
-	spawnUnitExtentUp = spawnUnitExtentUp.rotateByAngle(Vec2::ZERO, CC_DEGREES_TO_RADIANS(-volumeSprite->getRotation()));
+	spawnUnitExtent = spawnUnitExtent.rotateByAngle(Vec2::ZERO, CC_DEGREES_TO_RADIANS(-mySprite->getRotation()));
+	spawnUnitExtentUp = spawnUnitExtentUp.rotateByAngle(Vec2::ZERO, CC_DEGREES_TO_RADIANS(-mySprite->getRotation()));
 
 	//get the current component centre and extent
 	CCASSERT(getAnchorPoint() == Vec2(.5f, .5f), "ERROR: SpawnComponent anchor needs to be ste to .5,.5 for it's maths and physics to work correctly");
@@ -167,8 +80,8 @@ void SpawnVolume::onEnter()
 	{
 		worldCentre += getPhysicsBody()->getFirstShape()->getCenter();
 		//deduce the extent and extentUp from the collisionVertices (order= { BL,TL,TR,BR });
-		extent = (collisionVertices[0] + collisionVertices[1]) / 2 - getPhysicsBody()->getFirstShape()->getCenter();
-		extentUp = (collisionVertices[1] + collisionVertices[2]) / 2 - getPhysicsBody()->getFirstShape()->getCenter();
+		extent = (spriteVertices[0] + spriteVertices[1]) / 2 - getPhysicsBody()->getFirstShape()->getCenter();
+		extentUp = (spriteVertices[1] + spriteVertices[2]) / 2 - getPhysicsBody()->getFirstShape()->getCenter();
 		//transform the extent to get a vector with the current component orientation (keep only X component, that's the only relevant scaled axis)
 		//bear in mind it is already rotate with regards to the physics shape, so we just need to apply the SpawnVolume rotation
 		float myRotation = CC_DEGREES_TO_RADIANS(-getRotation());
@@ -212,9 +125,6 @@ void SpawnVolume::onEnter()
 	spawnAreaCentre = (negEdge1 - spawnAreaExtentForward) - worldCentre + getContentSize() / 2;
 	spawnAreaExtentUp = rotatedExtentUp + spawnUnitExtentUp;
 
-	//register ourselves into the spawncontroller
-	registerWithController();
-
 
 	//////////////////////////////////////////////////
 	////// TEST DRAW CODE
@@ -223,7 +133,7 @@ void SpawnVolume::onEnter()
 	//rotatedExtentUp = 2 * spawnAreaExtentUp;
 	///*rotatedExtent.x = abs(rotatedExtent.x);
 	//rotatedExtent.y = abs(rotatedExtent.y);*/
-	//float myRotation = CC_DEGREES_TO_RADIANS(volumeSprite->getRotation());
+	//float myRotation = CC_DEGREES_TO_RADIANS(mySprite->getRotation());
 	//rotatedExtent = rotatedExtent.rotateByAngle(Vec2::ZERO, myRotation);
 	//rotatedExtentUp = rotatedExtentUp.rotateByAngle(Vec2::ZERO, myRotation);
 	//Size testSpriteSize = Size(rotatedExtent.x, rotatedExtentUp.y);
@@ -234,7 +144,7 @@ void SpawnVolume::onEnter()
 	//testSprite->getTexture()->setTexParameters(params);
 	//testSprite->setAnchorPoint(Vec2(.5f, .5f));
 	//testSprite->setPosition(spawnAreaCentre);
-	//testSprite->setRotation(volumeSprite->getRotation());
+	//testSprite->setRotation(mySprite->getRotation());
 	//addChild(testSprite);
 	////// TEST DRAW CODE
 	//////////////////////////////////////////////////
@@ -255,37 +165,6 @@ bool SpawnVolume::FindSpawnAreaEdge(PhysicsWorld& world, const PhysicsRayCastInf
 		}
 	}
 	return true;
-}
-
-void SpawnVolume::onExit()
-{
-	super::onExit();
-	unregisterWithController();
-}
-
-void SpawnVolume::registerWithController()
-{
-	DodgeLevel *level = LevelManager::getInstance()->getCurrentLevel();
-	if (level)
-	{
-		SpawnController *findController = level->findControllerForSpawner(this);
-		//do we think we're already registered with someone?
-		if (myController != findController)
-		{
-			unregisterWithController();
-			//register with the new controller
-			myController = findController;
-			if (myController)
-			{
-				myController->registerPawn(this);
-			}
-		}
-	}
-}
-
-void SpawnVolume::unregisterWithController()
-{
-	if (myController) myController->unregisterPawn(this);
 }
 
 void SpawnVolume::controlledUpdate()
@@ -319,20 +198,19 @@ void SpawnVolume::spawnUnit()
 	}
 
 	//rotate by the spawner's rotation
+	Vec2 volumeCentre = getContentSize()/2;
 	spawnPoint.rotateByAngle(spawnAreaCentre, CC_DEGREES_TO_RADIANS(-getRotation()));
 	//translate spawnPoint by spawnCentre and layer centre
 	spawnPoint += getPosition() + (spawnAreaCentre - volumeCentre);
 	//add spawner's rotation to our random angle
-	spawnAngle -= getRotation() + volumeSprite->getRotation();
+	spawnAngle -= getRotation() + mySprite->getRotation();
 	thrustVector = spawnDirection.rotateByAngle(Vec2::ZERO, CC_DEGREES_TO_RADIANS(spawnAngle));
 	float newAngle = thrustVector.getAngle();
 	//and spawn!
 	DodgeLevel *level = LevelManager::getInstance()->getCurrentLevel();
-	Pellet *newUnit = level->spawnUnit(spawnUnitType->clone(),spawnPoint);
+	Pawn *newUnit = level->spawnUnit(spawnUnitType->clone(), spawnPoint);
 	if (newUnit)
 	{
-		newUnit->SetMovementDirection(thrustVector);
-		//increment score
-		//gameMode->IncrementScoreTotalEnemyCount();
+		newUnit->postInitializeCustom(&thrustVector);
 	}
 }

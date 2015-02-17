@@ -2,21 +2,21 @@
 #define __PELLET_H__
 
 #include "cocos2d.h"
+#include "Pawn.h"
 
 #define PELLET_SPEED 300.f
 #define PELLET_NOTARGETX -99999
 #define PELLET_NOTARGETY PELLET_NOTARGETX
 
-class Pellet : public cocos2d::Sprite
+class Pellet : public Pawn
 {
 public:
-	static Pellet* create();
-	/* after all game elements are created */
-	//virtual void PostInitializeComponents() override;
-	//virtual void BeginPlay();
+	static Pellet* create(UseController defaultController = UseController::AI);
 
 	//returns an unchanged version of a pellet
 	Pellet* clone() const;
+	//should receive a Vec2 through, use to set initial move direction
+	void postInitializeCustom(void* userData) override;
 
 	// frame update 
 	void update(float deltaTime) override;
@@ -35,10 +35,12 @@ public:
 	//FVector& GetMovementDirection();
 
 CC_CONSTRUCTOR_ACCESS:
-	bool initWithFile(const std::string& filename);
+	bool init(UseController defaultController);
+	
+	void updatePhysicsBodyShape() override;
 
 private:
-	typedef cocos2d::Sprite super;
+	typedef Pawn super;
 
 	float moveSpeed = PELLET_SPEED;
 	cocos2d::Vec2 touchPosition;

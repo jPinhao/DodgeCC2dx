@@ -29,7 +29,7 @@ void SpawnComponent::BeginSpawn()
 
 	bool hasSpawnAnim = !spawnAnimName.empty();
 	//spawning anim action added top sequence
-	if (hasSpawnAnim)
+	if (hasSpawnAnim && animTargetSprite)
 	{
 		//set animate action, queue FinishSpawn()
 		Animation *spawnAnim = AnimationCache::getInstance()->getAnimation(spawnAnimName);
@@ -47,7 +47,9 @@ void SpawnComponent::BeginSpawn()
 	spawnSequence.pushBack(CallFunc::create(CC_CALLBACK_0(SpawnComponent::FinishSpawn, this)));
 
 	Node *owner = getOwner();
-	owner->runAction(Sequence::create(spawnSequence));
+	Sequence *spawnAction = Sequence::create(spawnSequence);
+	owner->runAction(spawnAction); 
+	if (animTargetSprite) spawnAction->setTarget(animTargetSprite);
 	//disable any physics and updates until we're done
 	if (owner->getPhysicsBody()) owner->getPhysicsBody()->setEnable(false);
 	//owner->pause();
@@ -110,18 +112,20 @@ void SpawnComponent::FinishDespawn()
 	isDespawning = false;
 }
 
-void SpawnComponent::setSpawnAnim(const std::string& animFile, float animDuration, Texture2D* ownerTexture)
+void SpawnComponent::setSpawnAnim(const std::string& animFile, float animDuration, Sprite* targetSprite)
 {
 	spawnAnimName = animFile;
 	spawnLength = MAX(0, animDuration);
-	MyHelpers::PrepareAnimation(animFile, spawnLength, ownerTexture);
+	animTargetSprite = targetSprite;
+	MyHelpers::PrepareAnimation(animFile, spawnLength, targetSprite->getTexture());
 }
 
-void SpawnComponent::setDespawnAnim(const std::string& animFile, float animDuration, Texture2D* ownerTexture)
+void SpawnComponent::setDespawnAnim(const std::string& animFile, float animDuration, Sprite* targetSprite)
 {
 	despawnAnimName = animFile;
 	despawnLength = MAX(0, animDuration);
-	MyHelpers::PrepareAnimation(animFile, despawnLength, ownerTexture);
+	animTargetSprite = targetSprite;
+	MyHelpers::PrepareAnimation(animFile, despawnLength, targetSprite->getTexture());
 }
 
 bool SpawnComponent::isOwnerSpawning()

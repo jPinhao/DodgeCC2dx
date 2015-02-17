@@ -1,5 +1,15 @@
 #include "Controller.h"
+#include "LevelManager.h"
 
+bool Controller::init()
+{
+	LevelManager *lm = LevelManager::getInstance();
+	if (lm->getCurrentLevel())
+	{
+		lm->getCurrentLevel()->addController(this);
+		return true;
+	}
+}
 
 //enable spawning, this will start spawning if we're managing any spawners
 void Controller::enable(bool enable)

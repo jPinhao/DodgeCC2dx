@@ -15,13 +15,6 @@ SingleController* SingleController::create()
 	}
 }
 
-bool SingleController::init()
-{
-	return true;
-}
-
-//TODO - pawns registered with otehr controllers?
-
 //add a new spawner to this manager
 void SingleController::registerPawn(Pawn* pawn)
 {
@@ -69,5 +62,4 @@ SingleController::SingleController()
 SingleController::~SingleController()
 {
 	if (myPawn) myPawn->release();
-	super::~super();
 }

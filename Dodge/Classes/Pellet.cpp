@@ -1,13 +1,15 @@
 #include "Pellet.h"
+#include "SingleController.h"
+#include "PlayerController.h"
 #include "SpawnComponent.h"
 #include "StaticHelpers.h"
 
 USING_NS_CC;
 
-Pellet* Pellet::create()
+Pellet* Pellet::create(UseController defaultController/* = UseController::AI*/)
 {
 	Pellet *pellet = new(std::nothrow) Pellet();
-	if (pellet && pellet->initWithFile("Dot.png"))
+	if (pellet && pellet->init(defaultController))
 	{
 		pellet->autorelease();
 		return pellet;
@@ -25,10 +27,17 @@ Pellet* Pellet::clone() const
 	return Pellet::create();
 }
 
-bool Pellet::initWithFile(const std::string& filename)
+void Pellet::postInitializeCustom(void* userData)
 {
+	Vec2 *moveDir = reinterpret_cast<Vec2*>(userData);
+	if (moveDir) SetMovementDirection(*moveDir);
+}
+
+bool Pellet::init(UseController defaultController)
+{
+	Sprite *pelletSprite = Sprite::create("Dot.png");
 	//try to initialize the sprite
-	if (!super::initWithFile(filename))
+	if (!pelletSprite)
 	{
 		return false;
 	}
@@ -37,12 +46,11 @@ bool Pellet::initWithFile(const std::string& filename)
 	touchPosition.set(PELLET_NOTARGETX, PELLET_NOTARGETY);
 	//prepare spawn component
 	SpawnComponent *spawnComponent = SpawnComponent::create();
-	spawnComponent->setSpawnAnim("pellet_spawn.png", .6f, getTexture());
+	spawnComponent->setSpawnAnim("pellet_spawn.png", .6f, pelletSprite);
 	addComponent(spawnComponent);
 
 	//pellet physics setup
-	PhysicsBody *pelletBody = PhysicsBody::createCircle((getScale()*getContentSize().width) / 2,
-															PhysicsMaterial(0.f, 1.f, 0.f));
+	PhysicsBody *pelletBody = PhysicsBody::create();
 	if (pelletBody)
 	{
 		pelletBody->setVelocityLimit(moveSpeed);
@@ -50,18 +58,29 @@ bool Pellet::initWithFile(const std::string& filename)
 		setPhysicsBody(pelletBody);
 		//start as disabled until we've fully spawned
 		pelletBody->setEnable(false);
-		pelletBody->setContactTestBitmask(0xFFFFFFFF);
 
 		//setup the contact listener
 		auto contactListener = EventListenerPhysicsContact::create();
 		contactListener->onContactBegin = CC_CALLBACK_1(Pellet::onContactBegin, this);
 		contactListener->onContactPostSolve = CC_CALLBACK_2(Pellet::onContactPostSolve, this);
 		getEventDispatcher()->addEventListenerWithSceneGraphPriority(contactListener, this);
-
-		return true;
 	}
 
-	return false;
+	Controller *myController = nullptr;
+	if (defaultController == UseController::AI) myController=DefaultAIController::create();
+	else if (defaultController == UseController::PLAYER) myController = DefaultPlayerController::create();
+
+	return super::initWithController(myController, pelletSprite);
+}
+
+void Pellet::updatePhysicsBodyShape()
+{
+	getPhysicsBody()->removeAllShapes();
+	PhysicsShapeCircle *circle = PhysicsShapeCircle::create((getScale()*mySprite->getContentSize().width) / 2,
+																PhysicsMaterial(0.f, 1.f, 0.f));
+	circle->setContactTestBitmask(0xFFFFFFFF);
+	//circle->setContactTestBitmask(0xFFFFFFFF);
+	getPhysicsBody()->addShape(circle);
 }
 
 void Pellet::update(float deltaTime)
@@ -106,6 +125,9 @@ bool Pellet::onContactBegin(cocos2d::PhysicsContact &contact)
 	if (actor1 == this) otherActor = actor2;
 	else if (actor2 == this) otherActor = actor1;
 	else return true;
+
+	//otherActor could be null - if other pellet get's flagged for destruction, it's body get's immedeately detached from the body
+	if (!otherActor) return false;
 	
 	if (otherActor->isRunning() && this->isRunning())
 	{

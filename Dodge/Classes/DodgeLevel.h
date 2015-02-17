@@ -2,7 +2,7 @@
 #define __DODGELEVEL_H__
 
 #include "cocos2d.h"
-#include "Pellet.h"
+#include "Pawn.h"
 #include "SpawnController.h"
 #include "object_tags.h"
 
@@ -18,12 +18,11 @@ public:
 	static DodgeLevel* createFromFile(const std::string& filename);
 	//transform a coordinate from the level editor into one in our current game window
 	static cocos2d::Vec2 editorToGameCoordinateTransform(const cocos2d::Vec2& positionInEditor, const cocos2d::Vec2& levelSizeInEditor);
-	Pellet* spawnPlayer();
-	Pellet* findPlayerPawn() const;
+	Pawn* spawnPlayer();
+	Pawn* findPlayerPawn() const;
 
-	Pellet* spawnUnit(Pellet* newUnit, cocos2d::Vec2 position);
-	
-	SpawnController* findControllerForSpawner(SpawnVolume* spawner) const;
+	Pawn* spawnUnit(Pawn* newUnit, cocos2d::Vec2 position);
+	void addController(Controller* controller);
 
 CC_CONSTRUCTOR_ACCESS:
 	Scene* loadSceneFromFile(const std::string& filename);
