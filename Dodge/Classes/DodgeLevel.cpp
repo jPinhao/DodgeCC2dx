@@ -177,22 +177,12 @@ Pawn* DodgeLevel::spawnPlayer()
 	CCASSERT(playerPawn == nullptr, "ERROR: Trying to spawn the player when a pawn is already in place");
 	if (!playerPawn)
 	{
-		playerPawn = spawnUnit(Pellet::create(), defaultSpawnPoint);
+		playerPawn = spawnUnit(Pellet::create(Pawn::UseController::PLAYER), defaultSpawnPoint);
 	}
 
 	CCASSERT(!(playerPawn == nullptr), "ERROR: Failed to spawn the player");
 	if (playerPawn)
 	{
-		//setup the player input and events (should build some sort of player controller)
-		auto listener = EventListenerTouchAllAtOnce::create();
-		listener->onTouchesBegan = CC_CALLBACK_2(Pellet::setTargetPosition, dynamic_cast<Pellet*>(playerPawn));
-		listener->onTouchesMoved = CC_CALLBACK_2(Pellet::setTargetPosition, dynamic_cast<Pellet*>(playerPawn));
-		listener->onTouchesEnded = CC_CALLBACK_2(Pellet::clearTargetPosition, dynamic_cast<Pellet*>(playerPawn));
-		listener->onTouchesCancelled = CC_CALLBACK_2(Pellet::clearTargetPosition, dynamic_cast<Pellet*>(playerPawn));
-
-		auto dispatcher = playerPawn->getEventDispatcher();
-		dispatcher->addEventListenerWithSceneGraphPriority(listener, playerPawn);
-
 		//also disable restitution on the Player pellet, we shouldn't be bouncy like the others
 		if (playerPawn->getPhysicsBody())
 		{

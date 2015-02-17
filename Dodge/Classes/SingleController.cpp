@@ -20,9 +20,13 @@ void SingleController::registerPawn(Pawn* pawn)
 {
 	if (!pawn) return;
 
-	if (!myPawn) startController();
-	myPawn = pawn;
-	myPawn->retain();
+	if (pawn != myPawn)
+	{
+		unregisterPawn(myPawn);
+		myPawn = pawn;
+		myPawn->retain();
+		startController();
+	}
 }
 
 //remove a spawner from this manager
