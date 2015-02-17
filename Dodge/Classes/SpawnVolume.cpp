@@ -1,20 +1,6 @@
 #include "SpawnVolume.h"
 #include "SpawnController.h"
 
-//function definitions
-SpawnVolume::SpawnVolume()
-	:super(),
-	spawnDirection(DEFAULT_SPAWNDIR)
-{
-
-}
-
-SpawnVolume::~SpawnVolume()
-{
-	spawnUnitType->release();
-	super::~super();
-}
-
 SpawnVolume* SpawnVolume::create(const Pawn& unitsToSpawn, SpawnController *controller)
 {
 	SpawnVolume *ret = new (std::nothrow) SpawnVolume();
@@ -57,6 +43,15 @@ bool SpawnVolume::initWithSprite(const Pawn& unitsToSpawn, Sprite *sprite, Spawn
 	}
 
 	return super::initWithController(controller, sprite);
+}
+
+void SpawnVolume::setupPhysicsBody()
+{
+	super::setupPhysicsBody();
+	if (getPhysicsBody())
+	{
+		getPhysicsBody()->setDynamic(false);
+	}
 }
 
 //setup the valid area from which to spawn new units
@@ -211,6 +206,39 @@ void SpawnVolume::spawnUnit()
 	Pawn *newUnit = level->spawnUnit(spawnUnitType->clone(), spawnPoint);
 	if (newUnit)
 	{
+		//clones don't have a controller, we attach one manually
+		newUnit->posessByAIController();
 		newUnit->postInitializeCustom(&thrustVector);
 	}
+}
+
+//function definitions
+SpawnVolume::SpawnVolume()
+	:super(),
+	spawnDirection(DEFAULT_SPAWNDIR)
+{
+
+}
+
+SpawnVolume::~SpawnVolume()
+{
+	spawnUnitType->release();
+}
+
+SpawnVolume* SpawnVolume::clone() const
+{
+	SpawnVolume* cloneVolume = new (std::nothrow) SpawnVolume(*this);
+	if (cloneVolume && cloneVolume->initWithSprite(*spawnUnitType, cloneVolume->mySprite, nullptr))
+	{
+		cloneVolume->autorelease();
+	}
+	else CC_SAFE_DELETE(cloneVolume);
+	return cloneVolume;
+}
+
+SpawnVolume::SpawnVolume(const SpawnVolume& copy)
+	: super(copy)
+{
+	spawnUnitType = copy.spawnUnitType->clone();
+	spawnDirection = copy.spawnDirection;
 }

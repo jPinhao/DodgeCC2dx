@@ -26,7 +26,8 @@ public:
 	static Pawn* createWithSprite(cocos2d::Sprite *sprite, UseController defaultController = UseController::AI);
 	static Pawn* createWithController(Controller* pawnController, cocos2d::Sprite *sprite = nullptr);
 
-	//returns an unchanged version of the pawn
+	//clones an instance of the Pawn and returns it's pointer
+	//*a Controller must be attached manually
 	virtual Pawn* clone() const;
 	//allows custom initialization data to be set through Pawn interface- this applies userData and it's up to caller to clean-up
 	virtual void postInitializeCustom(void* userData);
@@ -75,8 +76,13 @@ CC_CONSTRUCTOR_ACCESS:
 	static Pawn* create();
 	bool initWithController(Controller* pawnController, cocos2d::Sprite *sprite);
 
+	//used by clone() to copy the members
+	Pawn(const Pawn& copy);
+	void operator=(const Pawn& copy) = delete;
+
 	//update the content layer with new dimensions, taking Sprite into account
 	void resizeContentLayer();
+	virtual void setupPhysicsBody();
 	virtual void updatePhysicsBodyShape();
 
 	Controller *myController;

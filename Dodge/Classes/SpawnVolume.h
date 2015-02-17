@@ -20,8 +20,9 @@ public:
 	static SpawnVolume* create(const Pawn& unitsToSpawn, SpawnController *controller);
 	static SpawnVolume* createWithSprite(const Pawn& unitsToSpawn, cocos2d::Sprite *sprite, SpawnController *controller);
 
-	//set the spawning direction -> if we have a sprite this is will take the prite's rotation into account
-	//void setSpawnDirection(const cocos2d::Vec2& direction);
+	//clones an instance of the SpawnVolume and returns it's pointer
+	//*a Controller must be attached manually
+	SpawnVolume* clone() const;
 
 	virtual void onEnter() override;
 
@@ -32,6 +33,12 @@ CC_CONSTRUCTOR_ACCESS:
 	SpawnVolume();
 	~SpawnVolume();
 	bool initWithSprite(const Pawn& unitsToSpawn, cocos2d::Sprite *sprite, SpawnController *controller);
+
+	//used by clone() to copy the members
+	SpawnVolume(const SpawnVolume& copy);
+	void operator=(const SpawnVolume& copy) = delete;
+
+	void setupPhysicsBody() override;
 
 private:
 	typedef Pawn super;

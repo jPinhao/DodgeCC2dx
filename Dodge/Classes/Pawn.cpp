@@ -90,7 +90,19 @@ void Pawn::resizeContentLayer()
 		spriteVertices[3] = Vec2(halfSize.width, -halfSize.height);
 	}
 
-	updatePhysicsBodyShape();
+	setupPhysicsBody();
+}
+
+void Pawn::setupPhysicsBody()
+{
+	if (mySprite)
+	{ 
+		PhysicsBody *pawnBody = PhysicsBody::create();
+		pawnBody->setDynamic(true);
+		pawnBody->setContactTestBitmask(0xFFFFFFFF);
+		setPhysicsBody(pawnBody);
+		updatePhysicsBodyShape();
+	}
 }
 
 //this only supports a single 4 vertex Physics Shape right now - override for custom
@@ -105,19 +117,6 @@ void Pawn::updatePhysicsBodyShape()
 		colPolygon->setContactTestBitmask(0xFFFFFFFF);
 		myBody->addShape(colPolygon, false);
 	}
-}
-
-Pawn* Pawn::clone() const
-{
-	Sprite *cloneSprite = nullptr;
-	if (mySprite)
-	{
-		cloneSprite = Sprite::createWithTexture(mySprite->getTexture());
-		cloneSprite->setScale(mySprite->getScaleX(), mySprite->getScaleY());
-		cloneSprite->setRotation(mySprite->getRotation());
-	}
-	Pawn* clonePawn = Pawn::createWithController(nullptr, cloneSprite);
-	return clonePawn;
 }
 
 void Pawn::postInitializeCustom(void* userData)
@@ -235,4 +234,30 @@ Pawn::~Pawn()
 {
 	//make sure we're unregistered
 	posessByController(nullptr);
+}
+
+Pawn* Pawn::clone() const
+{
+	Pawn* clonePawn = new (std::nothrow) Pawn(*this);
+	if (clonePawn && clonePawn->initWithController(nullptr, clonePawn->mySprite))
+	{
+		clonePawn->autorelease();
+	}
+	else CC_SAFE_DELETE(clonePawn);
+	return clonePawn;
+}
+
+Pawn::Pawn(const Pawn& copy)
+	: myController(nullptr)
+{
+	//clone the sprite
+	auto copySprite = copy.mySprite;
+	if (copySprite)
+	{
+		Sprite *cloneSprite = Sprite::createWithTexture(copySprite->getTexture());
+		cloneSprite->setScale(copySprite->getScaleX(), copySprite->getScaleY());
+		cloneSprite->setRotation(copySprite->getRotation());
+		cloneSprite->setPosition(copySprite->getPosition());
+		mySprite = cloneSprite;
+	}
 }

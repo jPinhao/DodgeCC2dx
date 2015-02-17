@@ -9,7 +9,12 @@ USING_NS_CC;
 Pellet* Pellet::create(UseController defaultController/* = UseController::AI*/)
 {
 	Pellet *pellet = new(std::nothrow) Pellet();
-	if (pellet && pellet->init(defaultController))
+
+	Controller *myController = nullptr;
+	if (defaultController == UseController::AI) myController = DefaultAIController::create();
+	else if (defaultController == UseController::PLAYER) myController = DefaultPlayerController::create();
+
+	if (pellet && pellet->initWithController(myController, Sprite::create("Dot.png")))
 	{
 		pellet->autorelease();
 		return pellet;
@@ -22,42 +27,41 @@ Pellet* Pellet::create(UseController defaultController/* = UseController::AI*/)
 	}
 }
 
-Pellet* Pellet::clone() const
-{
-	return Pellet::create();
-}
-
 void Pellet::postInitializeCustom(void* userData)
 {
 	Vec2 *moveDir = reinterpret_cast<Vec2*>(userData);
 	if (moveDir) SetMovementDirection(*moveDir);
 }
 
-bool Pellet::init(UseController defaultController)
+bool Pellet::initWithController(Controller* pawnController, Sprite *sprite)
 {
-	Sprite *pelletSprite = Sprite::create("Dot.png");
-	//try to initialize the sprite
-	if (!pelletSprite)
-	{
-		return false;
-	}
-	
-	//initialize touPOsition for follow touch code
-	touchPosition.set(PELLET_NOTARGETX, PELLET_NOTARGETY);
-	//prepare spawn component
-	SpawnComponent *spawnComponent = SpawnComponent::create();
-	spawnComponent->setSpawnAnim("pellet_spawn.png", .6f, pelletSprite);
-	addComponent(spawnComponent);
+	//Pellet's must have a sprite, Pawn's don't - check here
+	if (!sprite) return false;
 
-	//pellet physics setup
-	PhysicsBody *pelletBody = PhysicsBody::create();
-	if (pelletBody)
+	if (super::initWithController(pawnController, sprite))
 	{
-		pelletBody->setVelocityLimit(moveSpeed);
-		pelletBody->setDynamic(true);
-		setPhysicsBody(pelletBody);
-		//start as disabled until we've fully spawned
-		pelletBody->setEnable(false);
+		//initialize touPOsition for follow touch code
+		touchPosition.set(PELLET_NOTARGETX, PELLET_NOTARGETY);
+		//prepare spawn component
+		SpawnComponent *spawnComponent = SpawnComponent::create();
+		spawnComponent->setSpawnAnim("pellet_spawn.png", .6f, mySprite);
+		addComponent(spawnComponent);
+
+		return true;
+	}
+	else return false;
+}
+
+void Pellet::setupPhysicsBody()
+{
+	super::setupPhysicsBody();
+	auto myBody = getPhysicsBody();
+	if (myBody)
+	{
+		myBody->setVelocityLimit(moveSpeed);
+		myBody->setDynamic(true);
+		////start as disabled until we've fully spawned
+		//myBody->setEnable(false);
 
 		//setup the contact listener
 		auto contactListener = EventListenerPhysicsContact::create();
@@ -65,22 +69,18 @@ bool Pellet::init(UseController defaultController)
 		contactListener->onContactPostSolve = CC_CALLBACK_2(Pellet::onContactPostSolve, this);
 		getEventDispatcher()->addEventListenerWithSceneGraphPriority(contactListener, this);
 	}
-
-	Controller *myController = nullptr;
-	if (defaultController == UseController::AI) myController=DefaultAIController::create();
-	else if (defaultController == UseController::PLAYER) myController = DefaultPlayerController::create();
-
-	return super::initWithController(myController, pelletSprite);
 }
 
 void Pellet::updatePhysicsBodyShape()
 {
-	getPhysicsBody()->removeAllShapes();
-	PhysicsShapeCircle *circle = PhysicsShapeCircle::create((getScale()*mySprite->getContentSize().width) / 2,
-																PhysicsMaterial(0.f, 1.f, 0.f));
-	circle->setContactTestBitmask(0xFFFFFFFF);
-	//circle->setContactTestBitmask(0xFFFFFFFF);
-	getPhysicsBody()->addShape(circle);
+	if (getPhysicsBody())
+	{
+		getPhysicsBody()->removeAllShapes();
+		PhysicsShapeCircle *circle = PhysicsShapeCircle::create((getScale()*mySprite->getContentSize().width) / 2,
+			PhysicsMaterial(0.f, 1.f, 0.f));
+		circle->setContactTestBitmask(0xFFFFFFFF);
+		getPhysicsBody()->addShape(circle);
+	}
 }
 
 void Pellet::update(float deltaTime)
@@ -207,7 +207,44 @@ void Pellet::clearTargetPosition(const std::vector<cocos2d::Touch*>& touches, co
 	}
 }
 
+Pellet::Pellet()
+	: super(),
+	touchPosition(PELLET_NOTARGETX, PELLET_NOTARGETY)
+{
+
+}
+
 void Pellet::SetMovementDirection(cocos2d::Vec2 newDirection)
 {
 	moveDirection = newDirection;
+}
+
+const Pellet& Pellet::getDefaultObject()
+{
+	static Pellet* defaultPellet;
+	if (defaultPellet == nullptr)
+	{
+		defaultPellet = Pellet::create();
+		defaultPellet->retain();
+	}
+	return *defaultPellet;
+}
+
+Pellet* Pellet::clone() const
+{
+	Pellet* clonePellet = new (std::nothrow) Pellet(*this);
+	if (clonePellet && clonePellet->initWithController(nullptr, clonePellet->mySprite))
+	{
+		clonePellet->autorelease();
+	}
+	else CC_SAFE_DELETE(clonePellet);
+	return clonePellet;
+}
+
+Pellet::Pellet(const Pellet& copy)
+	: super(copy),
+	moveSpeed(copy.moveSpeed),
+	touchPosition(PELLET_NOTARGETX, PELLET_NOTARGETY)
+{
+
 }

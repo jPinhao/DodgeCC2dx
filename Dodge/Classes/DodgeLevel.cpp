@@ -115,7 +115,7 @@ void DodgeLevel::processLevelActors(Node *processRoot)
 				{
 					actor->setScaleX(scaleX);
 					actor->setRotation(rotation);
-					SpawnVolume *spawnVolume = SpawnVolume::createWithSprite(*Pellet::create(), static_cast<Sprite*>(actor), spawnController);
+					SpawnVolume *spawnVolume = SpawnVolume::createWithSprite(Pellet::getDefaultObject(), static_cast<Sprite*>(actor), spawnController);
 					spawnVolume->setPosition(inGamePosition);
 					scenery->addChild(spawnVolume);
 				}

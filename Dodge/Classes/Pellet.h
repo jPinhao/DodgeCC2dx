@@ -13,8 +13,12 @@ class Pellet : public Pawn
 public:
 	static Pellet* create(UseController defaultController = UseController::AI);
 
-	//returns an unchanged version of a pellet
+	static const Pellet& getDefaultObject();
+	//clones an instance of the Pellet and returns it's pointer
+	//*a Controller must be attached manually
+	//*moveDirection needs to be set manually 
 	Pellet* clone() const;
+
 	//should receive a Vec2 through, use to set initial move direction
 	void postInitializeCustom(void* userData) override;
 
@@ -35,8 +39,14 @@ public:
 	//FVector& GetMovementDirection();
 
 CC_CONSTRUCTOR_ACCESS:
-	bool init(UseController defaultController);
-	
+	bool initWithController(Controller* pawnController, cocos2d::Sprite *sprite);
+
+	//used by clone() to copy the members
+	Pellet();
+	Pellet(const Pellet& copy);
+	void operator=(const Pellet& copy) = delete;
+
+	void setupPhysicsBody() override;
 	void updatePhysicsBodyShape() override;
 
 private:
