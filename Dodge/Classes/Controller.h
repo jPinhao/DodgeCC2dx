@@ -15,6 +15,7 @@ class Controller : public cocos2d::Node
 public:
 	//try to start the controller running (if we're enabled and are have a pawn to control)
 	virtual void onEnter() override;
+	virtual void onExit() override;
 
 	//All these functions need to be implemented but vary greatly depending on Single/Multi controller
 	//update() should trigger the next update on the pawn(s) 
@@ -30,12 +31,15 @@ public:
 	void enable(bool enable);
 
 CC_CONSTRUCTOR_ACCESS:
-	Controller() : super(){};
+	Controller();
+	virtual ~Controller();
 	virtual bool init();
 	//start the updates
 	virtual void startController();
 	//stop the updates
 	virtual void stopController();
+	//clear any Pawn/Player tied to the controller - should be called onExit and the destructor
+	virtual void clearAllDependants();
 
 	bool enabled;
 

@@ -32,6 +32,13 @@ void Controller::onEnter()
 	if (enabled && isControlling()) startController();
 }
 
+void Controller::onExit()
+{
+	super::onExit();
+	//clear all dependencies
+	clearAllDependants();
+}
+
 void Controller::startController()
 {
 	scheduleUpdate();
@@ -40,4 +47,19 @@ void Controller::startController()
 void Controller::stopController()
 {
 	unscheduleUpdate();
+}
+
+void Controller::clearAllDependants()
+{
+	CCASSERT(true, "ERROR: Controller derived classes must override clearAllDependants");
+}
+
+Controller::Controller()
+	: super()
+{
+}
+
+Controller::~Controller() 
+{ 
+	clearAllDependants(); 
 }

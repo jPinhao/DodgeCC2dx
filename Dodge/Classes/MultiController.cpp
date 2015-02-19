@@ -96,21 +96,18 @@ bool MultiController::isControlling()
 	return !allPawns.empty();
 }
 
+//clear any Pawn/Player tied to the controller - should be called onExit and the destructor
+void MultiController::clearAllDependants()
+{
+	for (auto pawn : allPawns)
+	{
+		pawn->release();
+	}
+	allPawns.clear();
+}
+
 MultiController::MultiController()
 	: super()
 	, previousUpdatePawn(0)
 {
-}
-
-MultiController::~MultiController()
-{
-	if (isControlling())
-	{
-		for (auto pawn : allPawns)
-		{
-			pawn->release();
-		}
-		allPawns.clear();
-	}
-	super::~super();
 }

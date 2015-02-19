@@ -19,12 +19,14 @@ public:
 	void registerPawn(Pawn* myPawn) override;
 	//stop controlling this pawn
 	void unregisterPawn(Pawn* myPawn) override;
+	Pawn* getPawn();
 	//is controlling anyone?
 	bool isControlling() override;
 
 CC_CONSTRUCTOR_ACCESS:
 	SingleController();
-	~SingleController();
+	//clear any Pawn/Player tied to the controller - should be called onExit and the destructor
+	virtual void clearAllDependants() override;
 
 	//who are we controlling
 	Pawn *myPawn;

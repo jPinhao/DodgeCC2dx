@@ -36,7 +36,8 @@ void SingleController::unregisterPawn(Pawn* pawn)
 
 	if (myPawn && myPawn == pawn)
 	{
-		myPawn->release();
+		myPawn = nullptr;
+		pawn->release();
 		stopController();
 	}
 }
@@ -51,19 +52,25 @@ void SingleController::update(float deltaTime)
 	else stopController();
 }
 
+Pawn* SingleController::getPawn()
+{
+	return myPawn;
+}
+
 bool SingleController::isControlling()
 {
 	if(myPawn) return true;
 	else return false;
 }
 
+//clear any Pawn/Player tied to the controller - should be called onExit and the destructor
+void SingleController::clearAllDependants()
+{
+	unregisterPawn(myPawn);
+}
+
 SingleController::SingleController()
 	:super()
 	, myPawn(nullptr)
 {
-}
-
-SingleController::~SingleController()
-{
-	if (myPawn) myPawn->release();
 }

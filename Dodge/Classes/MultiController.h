@@ -22,7 +22,7 @@ public:
 
 	//controllerUpdateType defines how update() picks the next Pawn to update
 	static MultiController* create(MultiControllerUpdate controllerUpdateType = MultiControllerUpdate::RAND_SELECTOR);
-
+	
 	//update() should trigger the next update on a/several pawn depedning on the updateType 
 	virtual void update(float deltaTime) override;
 	//add a new pawn to this manager
@@ -36,7 +36,9 @@ CC_CONSTRUCTOR_ACCESS:
 	//controllerUpdateType defines how update() picks the next Pawn to update
 	bool init(MultiControllerUpdate controllerUpdateType);
 	MultiController();
-	~MultiController();
+
+	//clear any Pawn/Player tied to the controller - should be called onExit and the destructor
+	virtual void clearAllDependants() override;
 
 	//defines how update() picks the next Pawn to update, see MultiControllerUpdate for details
 	MultiControllerUpdate updateType;
