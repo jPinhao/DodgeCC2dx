@@ -29,6 +29,8 @@ public:
 	void registerPawn(Pawn* pawn) override;
 	//remove a pawn from this manager
 	void unregisterPawn(Pawn* pawn) override;
+	//return a controlled pawn
+	Pawn* getPawn(int pawnIndex) override;
 	//is controlling anyone?
 	bool isControlling() override;
 

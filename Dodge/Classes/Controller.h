@@ -24,6 +24,8 @@ public:
 	virtual void registerPawn(Pawn* myPawn)=0;
 	//remove a Pawn from this controller
 	virtual void unregisterPawn(Pawn* myPawn)=0;
+	//get the controlled pawn
+	virtual Pawn* getPawn(int pawnIndex=-1)=0;
 	//is controlling anyone?
 	virtual bool isControlling()=0;
 

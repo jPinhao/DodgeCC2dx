@@ -91,6 +91,12 @@ void MultiController::unregisterPawn(Pawn* pawn)
 	if (!isControlling()) stopController();
 }
 
+Pawn* MultiController::getPawn(int pawnIndex)
+{
+	if (pawnIndex<0 || pawnIndex >= allPawns.size()) return nullptr;
+	else return allPawns[pawnIndex];
+}
+
 bool MultiController::isControlling()
 {
 	return !allPawns.empty();

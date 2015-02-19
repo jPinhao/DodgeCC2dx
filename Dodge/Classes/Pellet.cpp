@@ -1,6 +1,5 @@
 #include "Pellet.h"
-#include "SingleController.h"
-#include "PlayerController.h"
+#include "DodgePlayerController.h"
 #include "SpawnComponent.h"
 #include "StaticHelpers.h"
 
@@ -12,24 +11,32 @@ Pellet* Pellet::create(UseController defaultController/* = UseController::AI*/)
 
 	Controller *myController = nullptr;
 	if (defaultController == UseController::AI) myController = DefaultAIController::create();
-	else if (defaultController == UseController::PLAYER) myController = DefaultPlayerController::create();
+	else if (defaultController == UseController::PLAYER) myController = DefaultPlayerController::create(nullptr);
 
 	if (pellet && pellet->initWithController(myController, Sprite::create("Dot.png")))
 	{
 		pellet->autorelease();
-		return pellet;
 	}
-	else
+	else CC_SAFE_DELETE(pellet);
+
+	return pellet;
+}
+
+Pellet* Pellet::createWithController(Controller *pawnController)
+{
+	Pellet *pellet = new(std::nothrow) Pellet();
+	if (pellet && pellet->initWithController(pawnController, Sprite::create("Dot.png")))
 	{
-		delete pellet;
-		pellet = NULL;
-		return NULL;
+		pellet->autorelease();
 	}
+	else CC_SAFE_DELETE(pellet);
+
+	return pellet;
 }
 
 void Pellet::postInitializeCustom(void* userData)
 {
-	Vec2 *moveDir = reinterpret_cast<Vec2*>(userData);
+	Vec2 *moveDir = static_cast<Vec2*>(userData);
 	if (moveDir) SetMovementDirection(*moveDir);
 }
 

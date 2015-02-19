@@ -10,3 +10,5 @@ Dodge/proj.win32/Dodge.v12.suo
 Dodge/proj.win32/Dodge.vcxproj
 Dodge/proj.win32/Dodge.vcxproj.filters
 Dodge/Classes/GameActor.h
+Dodge/Classes/PlayerVariable.h
+Dodge/Classes/PlayerState.h

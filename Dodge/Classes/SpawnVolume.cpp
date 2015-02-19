@@ -51,6 +51,8 @@ void SpawnVolume::setupPhysicsBody()
 	if (getPhysicsBody())
 	{
 		getPhysicsBody()->setDynamic(false);
+		getPhysicsBody()->setMass(PHYSICS_INFINITY);
+		getPhysicsBody()->setMoment(PHYSICS_INFINITY);
 	}
 }
 

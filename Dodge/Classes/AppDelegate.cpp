@@ -1,5 +1,6 @@
 #include "AppDelegate.h"
 #include "LevelManager.h"
+#include "PlayerManager.h"
 
 USING_NS_CC;
 
@@ -29,9 +30,11 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
     // turn on display FPS
     director->setDisplayStats(true);
-
     // set FPS. the default value is 1.0/60 if you don't call this
     director->setAnimationInterval(1.0 / 60);
+
+	//load a player
+	PlayerManager::getInstance()->addPlayer(0, "test");
 
     // create a scene. it's an autorelease object
 	LevelManager *levelManager = LevelManager::getInstance();

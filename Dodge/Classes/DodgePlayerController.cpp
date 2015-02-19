@@ -1,12 +1,12 @@
-#include "PlayerController.h"
+#include "DodgePlayerController.h"
 #include "Pellet.h"
 
 USING_NS_CC;
 
-PlayerController* PlayerController::create()
+DodgePlayerController* DodgePlayerController::create(Player *owner)
 {
-	PlayerController *ret = new(std::nothrow) PlayerController();
-	if (ret && ret->init())
+	DodgePlayerController *ret = new(std::nothrow) DodgePlayerController();
+	if (ret && ret->init(owner))
 	{
 		ret->autorelease();
 	}
@@ -17,22 +17,8 @@ PlayerController* PlayerController::create()
 	return ret;
 }
 
-//start the updates
-void PlayerController::startController()
-{
-	super::startController();
-	setupPlayerInput();
-}
-
-//stop the updates
-void PlayerController::stopController()
-{
-	super::stopController();
-	disablePlayerInput();
-}
-
-//setup input
-void PlayerController::setupPlayerInput()
+//setup input listening from the player
+void DodgePlayerController::setupPlayerInput()
 {
 	if (myPawn)
 	{
@@ -52,15 +38,8 @@ void PlayerController::setupPlayerInput()
 	}
 }
 
-void PlayerController::disablePlayerInput()
+void DodgePlayerController::disablePlayerInput()
 {
 	getEventDispatcher()->removeEventListenersForType(EventListener::Type::TOUCH_ALL_AT_ONCE);
 	return;
-}
-
-
-PlayerController::PlayerController()
-	:super()
-{
-
 }

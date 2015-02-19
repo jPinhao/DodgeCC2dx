@@ -19,7 +19,7 @@ public:
 	void registerPawn(Pawn* myPawn) override;
 	//stop controlling this pawn
 	void unregisterPawn(Pawn* myPawn) override;
-	Pawn* getPawn();
+	Pawn* getPawn(int index=0) override;
 	//is controlling anyone?
 	bool isControlling() override;
 

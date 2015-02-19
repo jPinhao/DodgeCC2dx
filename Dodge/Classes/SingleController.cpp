@@ -52,7 +52,7 @@ void SingleController::update(float deltaTime)
 	else stopController();
 }
 
-Pawn* SingleController::getPawn()
+Pawn* SingleController::getPawn(int index)
 {
 	return myPawn;
 }

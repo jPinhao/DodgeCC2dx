@@ -8,10 +8,13 @@
 #define PELLET_NOTARGETX -99999
 #define PELLET_NOTARGETY PELLET_NOTARGETX
 
+class DodgePlayerController;
+
 class Pellet : public Pawn
 {
 public:
 	static Pellet* create(UseController defaultController = UseController::AI);
+	static Pellet* createWithController(Controller *pawnController);
 
 	static const Pellet& getDefaultObject();
 	//clones an instance of the Pellet and returns it's pointer
@@ -51,6 +54,7 @@ CC_CONSTRUCTOR_ACCESS:
 
 private:
 	typedef Pawn super;
+	typedef DodgePlayerController DefaultPlayerController;
 
 	float moveSpeed = PELLET_SPEED;
 	cocos2d::Vec2 touchPosition;

@@ -6,7 +6,7 @@
 
 class Controller;
 class SingleController;
-class PlayerController;
+class PlayerSingleController;
 
 /*
 Base Pawn class - entities that get posessed by a Contoller (see Controller.h)
@@ -69,7 +69,7 @@ public:
 
 CC_CONSTRUCTOR_ACCESS:
 	typedef SingleController DefaultAIController;
-	typedef PlayerController DefaultPlayerController;
+	typedef PlayerSingleController DefaultPlayerController;
 
 	Pawn();
 	~Pawn();

@@ -1,6 +1,6 @@
 #include "Pawn.h"
 #include "SingleController.h"
-#include "PlayerController.h"
+#include "PlayerSingleController.h"
 
 USING_NS_CC;
 
@@ -12,7 +12,7 @@ Pawn* Pawn::create(UseController defaultController/* = UseController::AI*/)
 Pawn* Pawn::createWithSprite(Sprite *sprite, UseController defaultController/* = UseController::AI*/)
 {
 	if (defaultController == UseController::AI) return createWithController(DefaultAIController::create(), sprite);
-	else if (defaultController == UseController::PLAYER) return createWithController(DefaultPlayerController::create(), sprite);
+	else if (defaultController == UseController::PLAYER) return createWithController(DefaultPlayerController::create(nullptr), sprite);
 	else return nullptr;
 }
 
@@ -154,7 +154,7 @@ void Pawn::posessByAIController()
 //create a new default Player controller and get the pawn posessed by it
 void Pawn::posessByPlayerController()
 {
-	posessByController(DefaultPlayerController::create());
+	posessByController(DefaultPlayerController::create(nullptr));
 }
 //get the Pawn's controller
 Controller* Pawn::getController()

@@ -1,4 +1,7 @@
 #include "DodgeLevel.h"
+#include "PlayerManager.h"
+#include "Player.h"
+#include "DodgePlayerController.h"
 #include "Pellet.h"
 #include "SpawnVolume.h"
 #include "cocostudio\ActionTimeline\CSLoader.h"
@@ -160,33 +163,54 @@ void DodgeLevel::processLevelActors(Node *processRoot)
 void DodgeLevel::onEnter()
 {
 	super::onEnter();
-	Pawn *playerPawn = spawnPlayer();
+	Pawn *playerPawn = spawnPlayer(0);
 	CCASSERT(playerPawn, "ERROR: tried to start a level but couldn't spawn the player");
 }
 
+//remove player, do any transitions, save any states
 void DodgeLevel::onExit()
 {
 	super::onExit();
-	Node *player = findPlayerPawn();
-	if (player) removeChild(player);
+	Player *player = PlayerManager::getInstance()->getPlayer(0);
+	if (player)
+	{
+		Controller *controller = player->getController();
+		if (controller)
+		{
+			Pawn *playerPawn = controller->getPawn();
+			if (playerPawn) removeChild(playerPawn);
+		}
+	}	
 }
 
-Pawn* DodgeLevel::spawnPlayer()
+Pawn* DodgeLevel::spawnPlayer(int playerID)
 {
-	Pawn *playerPawn = findPlayerPawn();
-	CCASSERT(playerPawn == nullptr, "ERROR: Trying to spawn the player when a pawn is already in place");
-	if (!playerPawn)
+	Player *player = PlayerManager::getInstance()->getPlayer(playerID);
+	Controller *controller = nullptr;
+	Pawn *playerPawn = nullptr;
+	if (player)
 	{
-		playerPawn = spawnUnit(Pellet::create(Pawn::UseController::PLAYER), defaultSpawnPoint);
-	}
+		controller = player->getController();
+		if (!controller) controller = DodgePlayerController::create(player);
 
-	CCASSERT(!(playerPawn == nullptr), "ERROR: Failed to spawn the player");
-	if (playerPawn)
-	{
-		//also disable restitution on the Player pellet, we shouldn't be bouncy like the others
-		if (playerPawn->getPhysicsBody())
+		if (controller)
 		{
-			playerPawn->getPhysicsBody()->getFirstShape()->setMaterial(PhysicsMaterial(0.f, 0.f, 0.f));
+			playerPawn = controller->getPawn();
+			CCASSERT(playerPawn == nullptr, "ERROR: Trying to spawn the player when a pawn is already in place");
+			if (!playerPawn)
+			{
+				playerPawn = spawnUnit(Pellet::createWithController(controller), defaultSpawnPoint);
+			}
+
+			CCASSERT(!(playerPawn == nullptr), "ERROR: Failed to spawn the player");
+			if (playerPawn)
+			{
+				//also disable restitution on the Player pellet, we shouldn't be bouncy like the others
+				if (playerPawn->getPhysicsBody())
+				{
+					playerPawn->getPhysicsBody()->getFirstShape()->setMaterial(PhysicsMaterial(0.f, 0.f, 0.f));
+				}
+			}
 		}
 	}
 	return playerPawn;
