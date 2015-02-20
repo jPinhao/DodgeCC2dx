@@ -37,7 +37,7 @@ bool LevelManager::loadMainMenu()
 	else return false;
 }
 
-bool LevelManager::loadLevel(UINT index)
+bool LevelManager::loadLevel(unsigned int index)
 {
 	if (isLevelAvailable(index))
 	{
@@ -47,7 +47,7 @@ bool LevelManager::loadLevel(UINT index)
 	else return false;
 }
 
-bool LevelManager::isLevelAvailable(UINT index)
+bool LevelManager::isLevelAvailable(unsigned int index)
 {
 	if (index >= 0 && index < allLevels.size())
 	{

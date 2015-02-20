@@ -24,6 +24,7 @@ void AppDelegate::initGLContextAttrs()
 }
 
 bool AppDelegate::applicationDidFinishLaunching() {
+	CCLOG("AppDelegate::applicationDidFinishLaunching()");
     // initialize director
     auto director = Director::getInstance();
 	setupRenderSettings();

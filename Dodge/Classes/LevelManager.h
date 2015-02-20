@@ -15,9 +15,9 @@ public:
 	//switch to the main menu
 	bool loadMainMenu();
 	//switch to a particular level
-	bool loadLevel(UINT index);
+	bool loadLevel(unsigned int index);
 	//check if a level is available
-	bool isLevelAvailable(UINT index);
+	bool isLevelAvailable(unsigned int index);
 	DodgeLevel* getCurrentLevel();
 
 CC_CONSTRUCTOR_ACCESS:

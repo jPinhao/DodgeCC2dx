@@ -20,12 +20,13 @@ DodgePlayerController* DodgePlayerController::create(Player *owner)
 //setup input listening from the player
 void DodgePlayerController::setupPlayerInput()
 {
+	CCLOG("DodgePlayerController::setupPlayerInput()");
 	if (myPawn)
 	{
 		Pellet* myPellet = dynamic_cast<Pellet*>(myPawn);
 		if (myPellet)
 		{
-			//setup the player input and events (should build some sort of player controller)
+			CCLOG("DodgePlayerController::setupPlayerInput() !!2!!");
 			auto listener = EventListenerTouchAllAtOnce::create();
 			listener->onTouchesBegan = CC_CALLBACK_2(Pellet::setTargetPosition, myPellet);
 			listener->onTouchesMoved = CC_CALLBACK_2(Pellet::setTargetPosition, myPellet);
@@ -40,6 +41,7 @@ void DodgePlayerController::setupPlayerInput()
 
 void DodgePlayerController::disablePlayerInput()
 {
+	CCLOG("DodgePlayerController::disablePlayerInput()");
 	getEventDispatcher()->removeEventListenersForType(EventListener::Type::TOUCH_ALL_AT_ONCE);
 	return;
 }

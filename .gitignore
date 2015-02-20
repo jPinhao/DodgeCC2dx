@@ -12,3 +12,4 @@ Dodge/proj.win32/Dodge.vcxproj.filters
 Dodge/Classes/GameActor.h
 Dodge/Classes/PlayerVariable.h
 Dodge/Classes/PlayerState.h
+*.apk

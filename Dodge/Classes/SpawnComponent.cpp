@@ -40,7 +40,7 @@ void SpawnComponent::BeginSpawn()
 	}
 
 	//postspawn sequence, any extra setup is done before we activate the node
-	if (!postSpawnExtraSetup._Empty())
+	if (postSpawnExtraSetup != nullptr)
 	{
 		spawnSequence.pushBack(CallFunc::create(postSpawnExtraSetup));
 	}
@@ -75,7 +75,7 @@ void SpawnComponent::BeginDespawn()
 	Vector<FiniteTimeAction*> despawnSequence;
 
 	//postspawn sequence, runs after spawn anim and ends with holding Node being activated
-	if (!preDespawnExtraSetup._Empty())
+	if (preDespawnExtraSetup != nullptr)
 	{
 		despawnSequence.pushBack(CallFunc::create(postSpawnExtraSetup));
 	}
