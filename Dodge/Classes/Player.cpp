@@ -1,5 +1,7 @@
 #include "Player.h"
 #include "PlayerSingleController.h"
+#include "CustomEvents.h"
+#include "Pellet.h"
 #include <exception>
 
 Player* Player::create(unsigned int ID, const std::string& name/* = ""*/)
@@ -16,6 +18,10 @@ bool Player::init(unsigned int ID, const std::string& name)
 {
 	playerID = ID;
 	playerName = name;
+
+	auto pelletSpawnListener = cocos2d::EventListenerCustom::create(EVENT_PELLET_SPAWN, CC_CALLBACK_1(Player::changeScoreEvent,this));
+	cocos2d::Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(pelletSpawnListener, 1);
+
 	return true;
 }
 
@@ -28,9 +34,40 @@ void Player::setPlayerController(Controller *controller)
 		{
 			myController = controller;
 		}
-		else throw std::bad_cast("controller must implement IPlayerController interface");
+		//else throw std::bad_cast("controller must implement IPlayerController interface");
 	}
 	else myController = nullptr;
+}
+
+void Player::changeScoreEvent(cocos2d::EventCustom* scoreEvent)
+{
+	std::string eventName = scoreEvent->getEventName();
+	cocos2d::Node* target = scoreEvent->getCurrentTarget();
+	if (scoreEvent->getUserData())
+	{
+		if (eventName.compare(EVENT_PELLET_DIE)==0)
+		{
+			Pellet* eventSender = static_cast<Pellet*>(scoreEvent->getUserData());
+			if (!eventSender->isPlayerPawn()) 
+			{
+				levelScore.totalKilled++;
+				//score changed!
+				cocos2d::Director::getInstance()->getEventDispatcher()->dispatchCustomEvent(EVENT_PLAYER_SCORE_CHANGE, &levelScore);
+			}
+		}
+		else if (eventName.compare(EVENT_PELLET_SPAWN)==0)
+		{
+			Pellet* eventSender = static_cast<Pellet*>(scoreEvent->getUserData());
+			if (!eventSender->isPlayerPawn())
+			{
+				levelScore.totalSpawned++;
+				levelScore.maxAtOnce = MAX(levelScore.maxAtOnce, levelScore.totalSpawned - levelScore.totalKilled);
+				//score changed!
+				cocos2d::Director::getInstance()->getEventDispatcher()->dispatchCustomEvent(EVENT_PLAYER_SCORE_CHANGE, &levelScore);
+			}
+		}
+	}
+	return;
 }
 
 Controller* Player::getController()
@@ -39,7 +76,9 @@ Controller* Player::getController()
 }
 
 Player::Player()
-	: myController(nullptr)
+	: myController(nullptr),
+	levelScore(),
+	highscores()
 {
 
 }

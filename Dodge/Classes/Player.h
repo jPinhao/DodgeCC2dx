@@ -30,6 +30,8 @@ public:
 	void setPlayerController(Controller *controller);
 	Controller* getController();
 
+	void changeScoreEvent(cocos2d::EventCustom* scoreEvent);
+
 CC_CONSTRUCTOR_ACCESS:
 	bool init(unsigned int ID, const std::string& name);
 	Player();

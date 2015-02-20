@@ -2,6 +2,7 @@
 #include "DodgePlayerController.h"
 #include "SpawnComponent.h"
 #include "StaticHelpers.h"
+#include "CustomEvents.h"
 
 USING_NS_CC;
 
@@ -32,6 +33,19 @@ Pellet* Pellet::createWithController(Controller *pawnController)
 	else CC_SAFE_DELETE(pellet);
 
 	return pellet;
+}
+
+void Pellet::onEnter()
+{
+	super::onEnter();
+	getEventDispatcher()->dispatchCustomEvent(EVENT_PELLET_SPAWN, this);
+}
+
+void Pellet::kill()
+{
+	//dispatch event before we die, otherwise no eventDispatcher available
+	getEventDispatcher()->dispatchCustomEvent(EVENT_PELLET_DIE, this);
+	super::kill();
 }
 
 void Pellet::postInitializeCustom(void* userData)
@@ -145,7 +159,7 @@ bool Pellet::onContactBegin(cocos2d::PhysicsContact &contact)
 			if (this->isPlayerPawn())
 			{
 				//oh no, we be dead!
-				this->removeFromParent();
+				kill();
 				return false;
 			}
 			//we just collided with the player, ignore, other pellet will destroy itself and we don't collide
@@ -175,15 +189,15 @@ void Pellet::onContactPostSolve(cocos2d::PhysicsContact& contact, const cocos2d:
 
 bool Pellet::isPlayerPawn() const
 {
-	//temp hack to check if player
-	float restitution = getPhysicsBody()->getFirstShape()->getRestitution();
-	if (restitution == 0.f) return true;
-	else return false;
+	IPlayerController *castController = dynamic_cast<IPlayerController*>(myController);
+	if (castController) return true;
+	return false;
 }
 
 //onTouch triggers
 void Pellet::setTargetPosition(const std::vector<Touch*>& touches, Event* event)
 {
+	CCLOG("Pellet::setTargetPosition");
 	if (getPhysicsBody() && getPhysicsBody()->isEnabled())
 	{
 		Vec2 newTargetPosition = Vec2(PELLET_NOTARGETX, PELLET_NOTARGETY);

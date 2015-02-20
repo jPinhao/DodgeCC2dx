@@ -124,6 +124,11 @@ void Pawn::postInitializeCustom(void* userData)
 	return;
 }
 
+void Pawn::kill()
+{
+	removeFromParent();
+}
+
 void Pawn::onExit()
 {
 	super::onExit();

@@ -32,6 +32,7 @@ public:
 	//allows custom initialization data to be set through Pawn interface- this applies userData and it's up to caller to clean-up
 	virtual void postInitializeCustom(void* userData);
 
+	virtual void kill();
 	virtual void onExit();
 
 	//*** Controller functions

@@ -4,7 +4,9 @@
 #include "DodgePlayerController.h"
 #include "Pellet.h"
 #include "SpawnVolume.h"
+#include "CustomEvents.h"
 #include "cocostudio\ActionTimeline\CSLoader.h"
+#include "ui\UIText.h"
 
 USING_NS_CC;
 
@@ -144,7 +146,19 @@ void DodgeLevel::processLevelActors(Node *processRoot)
 			}
 			case TAG_EDITOR_BG_SCORE:
 			{
-				background->addChild(actor);
+				ui::Text *bgText = dynamic_cast<ui::Text*>(actor);
+				if (bgText)
+				{
+					background->addChild(bgText);
+					auto scoreChangeListener = cocos2d::EventListenerCustom::create(EVENT_PLAYER_SCORE_CHANGE,
+						[bgText](EventCustom* event)
+						{
+							LevelScore *score = static_cast<LevelScore*>(event->getUserData());
+							Value scoreString((int)(score->totalSpawned + score->totalKilled));
+							bgText->setString(scoreString.asString());
+						});
+					bgText->getEventDispatcher()->addEventListenerWithSceneGraphPriority(scoreChangeListener, bgText);
+				}
 				break;
 			}
 			case TAG_EDITOR_PLAYER_SPAWNPOINT:

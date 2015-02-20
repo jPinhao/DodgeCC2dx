@@ -22,6 +22,9 @@ public:
 	//*moveDirection needs to be set manually 
 	Pellet* clone() const;
 
+	void onEnter() override;
+	void kill() override;
+
 	//should receive a Vec2 through, use to set initial move direction
 	void postInitializeCustom(void* userData) override;
 
