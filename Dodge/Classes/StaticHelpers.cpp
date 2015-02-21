@@ -51,3 +51,17 @@ void MyHelpers::PrepareAnimation(const std::string& framesFileName, float animDu
 		}
 	}
 }
+
+void MyHelpers::transformVec2(const Mat4& tranform, Vec2* vecToTransform)
+{
+	Vec3 vec2ToVec3(vecToTransform->x, vecToTransform->y, 0.f);
+	tranform.transformVector(&vec2ToVec3);
+	vecToTransform->set(vec2ToVec3.x, vec2ToVec3.y);
+}
+
+void MyHelpers::transformPoint2(const Mat4& tranform, Vec2* pointToTransform)
+{
+	Vec3 vec2ToVec3(pointToTransform->x, pointToTransform->y, 0.f);
+	tranform.transformPoint(&vec2ToVec3);
+	pointToTransform->set(vec2ToVec3.x, vec2ToVec3.y);
+}
