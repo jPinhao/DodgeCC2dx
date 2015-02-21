@@ -42,6 +42,7 @@ bool Pawn::initWithController(Controller* pawnController, cocos2d::Sprite *sprit
 	if (mySprite)
 	{
 		addChild(mySprite);
+		setupPhysicsBody();
 		resizeContentLayer();
 	}
 	return true;
@@ -57,16 +58,13 @@ void Pawn::resizeContentLayer()
 		float spriteRotation = CC_DEGREES_TO_RADIANS(-mySprite->getRotation());
 
 		//rotate the size dimensions so we fit the sprite
-		Size volumeSize;
+		//Size volumeSize;
 		float absCos = abs(cosf(spriteRotation)), absSin = abs(sinf(spriteRotation));
-		volumeSize.width = spriteSize.width*absCos + spriteSize.height*absSin;
-		volumeSize.height = spriteSize.height*absCos + spriteSize.width*absSin;
+		Size volumeSize = mySprite->getBoundingBox().size;
 		//center the sprite
-		mySprite->setAnchorPoint(Vec2(.5f, .5f));
 		mySprite->setPosition(.5f * volumeSize.width, .5f * volumeSize.height);
 		//update the Pawn settings to fit the sprite
 		setContentSize(volumeSize);
-		
 		spriteVertices[0] = Vec2(0.f, 0.f);
 		spriteVertices[1] = Vec2(0.f, spriteSize.height);
 		spriteVertices[2] = Vec2(spriteSize.width, spriteSize.height);
@@ -89,8 +87,7 @@ void Pawn::resizeContentLayer()
 		spriteVertices[2] = Vec2(halfSize.width, halfSize.height);
 		spriteVertices[3] = Vec2(halfSize.width, -halfSize.height);
 	}
-
-	setupPhysicsBody();
+	updatePhysicsBodyShape();
 }
 
 void Pawn::setupPhysicsBody()
@@ -101,7 +98,6 @@ void Pawn::setupPhysicsBody()
 		pawnBody->setDynamic(true);
 		pawnBody->setContactTestBitmask(0xFFFFFFFF);
 		setPhysicsBody(pawnBody);
-		updatePhysicsBodyShape();
 	}
 }
 
