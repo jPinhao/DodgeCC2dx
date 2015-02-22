@@ -137,7 +137,7 @@ void DodgeLevel::processLevelActors(Node *processRoot)
 					windowSize.width,
 					windowSize.height));
 				backgroundSprite->setAnchorPoint(Vec2(.5f, .5f));
-				backgroundSprite->setPosition((windowOrigin+windowSize)/2);
+				backgroundSprite->setPosition(windowOrigin + windowSize/2);
 				Texture2D::TexParams params = { GL_LINEAR, GL_LINEAR, GL_REPEAT, GL_REPEAT };
 				backgroundSprite->getTexture()->setTexParameters(params);
 				background->addChild(backgroundSprite);
