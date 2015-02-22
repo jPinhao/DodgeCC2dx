@@ -7,6 +7,7 @@
 class Controller;
 class SingleController;
 class PlayerSingleController;
+class Player;
 
 /*
 Base Pawn class - entities that get posessed by a Contoller (see Controller.h)
@@ -34,6 +35,8 @@ public:
 
 	virtual void kill();
 	virtual void onExit();
+	//are we controller by a player, which one?
+	Player* getControllingPlayer() const;
 
 	//*** Controller functions
 

@@ -11,6 +11,7 @@ public:
 	virtual void setupPlayerInput() = 0;
 	virtual void disablePlayerInput() = 0;
 
+	Player* getOwner(){ return controllingPlayer; };
 protected:
 	//PControllers require a player owner to be initialized
 	virtual bool init(Player *owner) = 0;

@@ -44,7 +44,7 @@ void Pellet::onEnter()
 void Pellet::kill()
 {
 	//dispatch event before we die, otherwise no eventDispatcher available
-	getEventDispatcher()->dispatchCustomEvent(EVENT_PELLET_DIE, this);
+	getEventDispatcher()->dispatchEvent(&PawnDeathEvent(EVENT_PELLET_DIE, *this));
 	super::kill();
 }
 
@@ -156,14 +156,14 @@ bool Pellet::onContactBegin(cocos2d::PhysicsContact &contact)
 		Pellet* otherPellet = dynamic_cast<Pellet*>(otherActor);
 		if (otherPellet)
 		{
-			if (this->isPlayerPawn())
+			if (this->getControllingPlayer())
 			{
 				//oh no, we be dead!
 				kill();
 				return false;
 			}
 			//we just collided with the player, ignore, other pellet will destroy itself and we don't collide
-			else if (otherPellet->isPlayerPawn())
+			else if (otherPellet->getControllingPlayer())
 			{
 				return false;
 			}
@@ -185,13 +185,6 @@ void Pellet::onContactPostSolve(cocos2d::PhysicsContact& contact, const cocos2d:
 
 	Vec2 newVelocity = getPhysicsBody()->getVelocity();
 	if (newVelocity.length() != moveSpeed) SetMovementDirection(newVelocity);
-}
-
-bool Pellet::isPlayerPawn() const
-{
-	IPlayerController *castController = dynamic_cast<IPlayerController*>(myController);
-	if (castController) return true;
-	return false;
 }
 
 //onTouch triggers

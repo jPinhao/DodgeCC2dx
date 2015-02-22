@@ -131,6 +131,16 @@ void Pawn::onExit()
 	posessByController(nullptr);
 }
 
+Player* Pawn::getControllingPlayer() const
+{
+	IPlayerController *castController = dynamic_cast<IPlayerController*>(myController);
+	if (castController)
+	{
+		return castController->getOwner();
+	}
+	return nullptr;
+}
+
 //*** Controller functions
 
 //update controlled by the attached Controller - does nothing for base Pawns, should be overriden by subclasses

@@ -36,7 +36,6 @@ public:
 	// ensure pellet exits collision with the correct speed
 	void onContactPostSolve(cocos2d::PhysicsContact& contact, const cocos2d::PhysicsContactPostSolve& solve);
 
-	bool isPlayerPawn() const;
 	//bool IsSpawning();
 
 	void setTargetPosition(const std::vector<cocos2d::Touch*>& touches, cocos2d::Event* event);

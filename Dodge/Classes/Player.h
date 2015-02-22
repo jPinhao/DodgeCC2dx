@@ -40,7 +40,7 @@ CC_CONSTRUCTOR_ACCESS:
 
 private:
 	//private destructor - PlayerManager has control over my life time
-	~Player(){};
+	~Player();
 
 	//player identifiers
 	unsigned int playerID;
