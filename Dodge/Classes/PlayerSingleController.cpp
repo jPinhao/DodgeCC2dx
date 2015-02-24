@@ -35,14 +35,14 @@ bool PlayerSingleController::init(Player *owner)
 void PlayerSingleController::startController()
 {
 	super::startController();
-	setupPlayerInput();
+	playerPawnSetup();
 }
 
 //stop the updates
 void PlayerSingleController::stopController()
 {
 	super::stopController();
-	disablePlayerInput();
+	playerPawnRelease();
 }
 
 void PlayerSingleController::clearAllDependants()

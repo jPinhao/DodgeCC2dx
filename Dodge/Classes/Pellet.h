@@ -8,6 +8,10 @@
 #define PELLET_NOTARGETX -99999
 #define PELLET_NOTARGETY PELLET_NOTARGETX
 
+#define PELLET_LIFE 100
+// DECAY_RATE is in units p/sec
+#define PELLET_DECAY_RATE 100
+
 class DodgePlayerController;
 
 class Pellet : public Pawn

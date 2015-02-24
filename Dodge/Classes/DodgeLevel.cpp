@@ -215,16 +215,6 @@ Pawn* DodgeLevel::spawnPlayer(int playerID)
 			{
 				playerPawn = spawnUnit(Pellet::createWithController(controller), defaultSpawnPoint);
 			}
-
-			CCASSERT(!(playerPawn == nullptr), "ERROR: Failed to spawn the player");
-			if (playerPawn)
-			{
-				//also disable restitution on the Player pellet, we shouldn't be bouncy like the others
-				if (playerPawn->getPhysicsBody())
-				{
-					playerPawn->getPhysicsBody()->getFirstShape()->setMaterial(PhysicsMaterial(0.f, 0.f, 0.f));
-				}
-			}
 		}
 	}
 	return playerPawn;

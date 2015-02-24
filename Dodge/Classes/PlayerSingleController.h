@@ -24,6 +24,17 @@ CC_CONSTRUCTOR_ACCESS:
 	//clear pawn and player links
 	virtual void clearAllDependants() override;
 
+	//do any player pawn specific setup
+	virtual void playerPawnSetup() override
+	{
+		setupPlayerInput();
+	};
+	//clear any player specific state
+	virtual void playerPawnRelease() override
+	{
+		disablePlayerInput();
+	};
+
 	Player *controllingPlayer;
 
 private:

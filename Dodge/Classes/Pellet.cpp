@@ -1,8 +1,10 @@
 #include "Pellet.h"
 #include "DodgePlayerController.h"
 #include "SpawnComponent.h"
+#include "DamageComponent.h"
 #include "StaticHelpers.h"
 #include "CustomEvents.h"
+#include "object_tags.h"
 
 USING_NS_CC;
 
@@ -43,8 +45,9 @@ void Pellet::onEnter()
 
 void Pellet::kill()
 {
+	PawnDeathEvent deathEvent(EVENT_PELLET_DIE, *this);
 	//dispatch event before we die, otherwise no eventDispatcher available
-	getEventDispatcher()->dispatchEvent(&PawnDeathEvent(EVENT_PELLET_DIE, *this));
+	getEventDispatcher()->dispatchEvent(&deathEvent);
 	super::kill();
 }
 
@@ -67,6 +70,15 @@ bool Pellet::initWithController(Controller* pawnController, Sprite *sprite)
 		SpawnComponent *spawnComponent = SpawnComponent::create();
 		spawnComponent->setSpawnAnim("pellet_spawn.png", .6f, mySprite);
 		addComponent(spawnComponent);
+
+		//add ability to take damage
+		TakesDamageComponent *damageCom = TakesDamageComponent::create(PELLET_LIFE);
+		damageCom->onLifeUpdate = 
+					[this,damageCom](float damageDone)
+					{
+						this->setScale((.7f * damageCom->getCurrentLife() / damageCom->getMaxLife()) + .3f);
+					};
+		addComponent(damageCom);
 
 		return true;
 	}
@@ -141,10 +153,20 @@ bool Pellet::onContactBegin(cocos2d::PhysicsContact &contact)
 	Node *actor1 = MyHelpers::getPhysShapeOwner(contact.getShapeA());
 	Node *actor2 = MyHelpers::getPhysShapeOwner(contact.getShapeB());
 	Node *otherActor = nullptr;
-
+	PhysicsShape *myShape, *otherShape;
 	// this get's called on any contact for every PhysicsListener, so we need to check if we are indeed one of the colliding entities....
-	if (actor1 == this) otherActor = actor2;
-	else if (actor2 == this) otherActor = actor1;
+	if (actor1 == this)
+	{
+		otherActor = actor2;
+		myShape = contact.getShapeA();
+		otherShape = contact.getShapeB();
+	}
+	else if (actor2 == this)
+	{
+		otherActor = actor1;
+		myShape = contact.getShapeB();
+		otherShape = contact.getShapeA();
+	}
 	else return true;
 
 	//otherActor could be null - if other pellet get's flagged for destruction, it's body get's immedeately detached from the body
@@ -156,15 +178,20 @@ bool Pellet::onContactBegin(cocos2d::PhysicsContact &contact)
 		Pellet* otherPellet = dynamic_cast<Pellet*>(otherActor);
 		if (otherPellet)
 		{
+			//player hit something, do nothing
 			if (this->getControllingPlayer())
 			{
-				//oh no, we be dead!
-				kill();
-				return false;
+				if (myShape->getTag() == TAG_GAME_COMNODE_AURADMG_SHAPE) return true;
+				else return false;
 			}
-			//we just collided with the player, ignore, other pellet will destroy itself and we don't collide
-			else if (otherPellet->getControllingPlayer())
+			//we just collided with the player, and it'stheir primary collision shape, kill them by applying max damage
+			if (otherPellet->getControllingPlayer() && otherShape->getTag() != TAG_GAME_COMNODE_AURADMG_SHAPE)
 			{
+				TakesDamageComponent *otherDamageCom = dynamic_cast<TakesDamageComponent*>(otherPellet->getComponent("TakesDamageComponent"));
+				if (otherDamageCom)
+				{
+					otherDamageCom->addDamage(otherDamageCom->getCurrentLife(), 0x0000);
+				}
 				return false;
 			}
 		}

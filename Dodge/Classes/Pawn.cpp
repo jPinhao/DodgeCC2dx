@@ -33,10 +33,6 @@ Pawn* Pawn::createWithController(Controller* pawnController, Sprite *sprite/* = 
 
 bool Pawn::initWithController(Controller* pawnController, cocos2d::Sprite *sprite)
 {
-	//setup controller
-	myController = pawnController;
-	posessByController(pawnController);
-
 	//setup sprite
 	mySprite = sprite;
 	if (mySprite)
@@ -45,6 +41,9 @@ bool Pawn::initWithController(Controller* pawnController, cocos2d::Sprite *sprit
 		setupPhysicsBody();
 		resizeContentLayer();
 	}
+	//setup controller
+	myController = pawnController;
+	posessByController(pawnController);
 	return true;
 }
 

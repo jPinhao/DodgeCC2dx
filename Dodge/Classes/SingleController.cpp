@@ -25,7 +25,7 @@ void SingleController::registerPawn(Pawn* pawn)
 		unregisterPawn(myPawn);
 		myPawn = pawn;
 		myPawn->retain();
-		startController();
+		if(enabled) startController();
 	}
 }
 

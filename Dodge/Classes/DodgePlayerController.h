@@ -11,5 +11,14 @@ public:
 	//setup input listening from the player
 	void setupPlayerInput() override;
 	void disablePlayerInput() override;
+
+protected:
+	//do any player pawn specific setup
+	void playerPawnSetup() override;
+	//clear any player specific state
+	void playerPawnRelease() override;
+
+private:
+	typedef PlayerSingleController super;
 };
 #endif
