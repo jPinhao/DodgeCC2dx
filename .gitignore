@@ -4,6 +4,7 @@ Dodge/proj.*
 !.cpp
 *.opensdf
 *.suo
+*.sdf
 Dodge/proj.win32/build-cfg.json
 Dodge/Classes/GameActor.h
 Dodge/Classes/PlayerVariable.h
