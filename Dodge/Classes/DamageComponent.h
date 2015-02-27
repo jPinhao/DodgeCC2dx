@@ -2,8 +2,8 @@
 #define __PAWNDAMAGECOMPONENT_H__
 
 #include "cocos2d.h"
-#include "UpdatingComponent.h"
-#include "Pawn.h"
+#include "EntityComponents\UpdatingComponent.h"
+#include "CoreEntities\Pawn.h"
 
 #define DMG_PLAYER_OTHER 0x000F
 #define DMG_AI_OTHER 0x00F0

@@ -7,8 +7,7 @@ Dodge/proj.*
 Dodge/proj.win32/build-cfg.json
 Dodge/proj.win32/Dodge.sdf
 Dodge/proj.win32/Dodge.v12.suo
-Dodge/proj.win32/Dodge.vcxproj
-Dodge/proj.win32/Dodge.vcxproj.filters
+Dodge/proj.win32/Dodge.vcxproj.user
 Dodge/Classes/GameActor.h
 Dodge/Classes/PlayerVariable.h
 Dodge/Classes/PlayerState.h

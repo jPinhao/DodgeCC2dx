@@ -1,7 +1,7 @@
 #ifndef __DODGEPLAYERCONTROLLER_H__
 #define __DODGEPLAYERCONTROLLER_H__
 
-#include "PlayerSingleController.h"
+#include "CoreEntities\PlayerSingleController.h"
 
 class DodgePlayerController : public PlayerSingleController
 {

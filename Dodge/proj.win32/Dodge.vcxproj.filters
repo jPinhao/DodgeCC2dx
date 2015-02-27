@@ -10,6 +10,15 @@
     <Filter Include="src">
       <UniqueIdentifier>{bb6c862e-70e9-49d9-81b7-3829a6f50471}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\GameAgnostic">
+      <UniqueIdentifier>{1e22449d-362f-4841-a931-57f6255f007e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\GameAgnostic\CoreEntities">
+      <UniqueIdentifier>{d20c035f-1296-401f-95e5-532c2e8c54d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\GameAgnostic\EntityComponents">
+      <UniqueIdentifier>{205b7a00-0ccb-48e0-a796-72c2906ee7e2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -18,23 +27,53 @@
     <ClCompile Include="..\Classes\AppDelegate.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\DamageComponent.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
     <ClCompile Include="..\Classes\DodgeLevel.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\Pellet.cpp">
+    <ClCompile Include="..\Classes\DodgePlayerController.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\LevelManager.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\SpawnComponent.cpp">
+    <ClCompile Include="..\Classes\Pellet.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\AnimationLoader.cpp">
+    <ClCompile Include="..\Classes\Player.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\SpawnVolume.cpp">
+    <ClCompile Include="..\Classes\StaticHelpers.cpp">
       <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\GameAgnostic\CoreEntities\Controller.cpp">
+      <Filter>src\GameAgnostic\CoreEntities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\GameAgnostic\CoreEntities\MultiController.cpp">
+      <Filter>src\GameAgnostic\CoreEntities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\GameAgnostic\CoreEntities\Pawn.cpp">
+      <Filter>src\GameAgnostic\CoreEntities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\GameAgnostic\CoreEntities\PlayerSingleController.cpp">
+      <Filter>src\GameAgnostic\CoreEntities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\GameAgnostic\CoreEntities\SingleController.cpp">
+      <Filter>src\GameAgnostic\CoreEntities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\GameAgnostic\EntityComponents\SpawnComponent.cpp">
+      <Filter>src\GameAgnostic\EntityComponents</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\GameAgnostic\PlayerManager.cpp">
+      <Filter>src\GameAgnostic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\GameAgnostic\SpawnController.cpp">
+      <Filter>src\GameAgnostic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\GameAgnostic\SpawnVolume.cpp">
+      <Filter>src\GameAgnostic</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -44,26 +83,71 @@
     <ClInclude Include="..\Classes\AppDelegate.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\object_tags.h">
+    <ClInclude Include="..\Classes\CustomEvents.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\DamageComponent.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\DodgeLevel.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\Pellet.h">
+    <ClInclude Include="..\Classes\DodgePlayerController.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\LevelManager.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\SpawnComponent.h">
+    <ClInclude Include="..\Classes\object_tags.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\AnimationLoader.h">
+    <ClInclude Include="..\Classes\Pellet.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\SpawnVolume.h">
+    <ClInclude Include="..\Classes\Player.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\PlayerState.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\PlayerVariable.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\StaticHelpers.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\GameAgnostic\CoreEntities\Controller.h">
+      <Filter>src\GameAgnostic\CoreEntities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\GameAgnostic\CoreEntities\IPlayerController.h">
+      <Filter>src\GameAgnostic\CoreEntities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\GameAgnostic\CoreEntities\MultiController.h">
+      <Filter>src\GameAgnostic\CoreEntities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\GameAgnostic\CoreEntities\Pawn.h">
+      <Filter>src\GameAgnostic\CoreEntities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\GameAgnostic\CoreEntities\PlayerSingleController.h">
+      <Filter>src\GameAgnostic\CoreEntities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\GameAgnostic\CoreEntities\SingleController.h">
+      <Filter>src\GameAgnostic\CoreEntities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\GameAgnostic\EntityComponents\SpawnComponent.h">
+      <Filter>src\GameAgnostic\EntityComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\GameAgnostic\EntityComponents\UpdatingComponent.h">
+      <Filter>src\GameAgnostic\EntityComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\GameAgnostic\PlayerManager.h">
+      <Filter>src\GameAgnostic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\GameAgnostic\SpawnController.h">
+      <Filter>src\GameAgnostic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\GameAgnostic\SpawnVolume.h">
+      <Filter>src\GameAgnostic</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

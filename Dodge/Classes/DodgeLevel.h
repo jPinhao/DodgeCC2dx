@@ -2,7 +2,7 @@
 #define __DODGELEVEL_H__
 
 #include "cocos2d.h"
-#include "Pawn.h"
+#include "CoreEntities\Pawn.h"
 #include "SpawnController.h"
 #include "object_tags.h"
 

@@ -2,7 +2,7 @@
 #define __SPAWNCONTROLLER_H__
 
 #include "cocos2d.h"
-#include "MultiController.h"
+#include "CoreEntities\MultiController.h"
 #include "SpawnVolume.h"
 
 #define DEFAULT_SPAWNRATE 2.f

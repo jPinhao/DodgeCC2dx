@@ -9,6 +9,7 @@ bool Controller::init()
 		lm->getCurrentLevel()->addController(this);
 		return true;
 	}
+	else return false;
 }
 
 //enable spawning, this will start spawning if we're managing any spawners

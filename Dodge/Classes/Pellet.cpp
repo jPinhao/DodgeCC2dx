@@ -1,6 +1,6 @@
 #include "Pellet.h"
 #include "DodgePlayerController.h"
-#include "SpawnComponent.h"
+#include "EntityComponents\SpawnComponent.h"
 #include "DamageComponent.h"
 #include "StaticHelpers.h"
 #include "CustomEvents.h"

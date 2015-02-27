@@ -2,7 +2,7 @@
 #define __PELLET_H__
 
 #include "cocos2d.h"
-#include "Pawn.h"
+#include "CoreEntities\Pawn.h"
 
 #define PELLET_SPEED 300.f
 #define PELLET_NOTARGETX -99999

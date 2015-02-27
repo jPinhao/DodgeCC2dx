@@ -1,5 +1,5 @@
 #include "Player.h"
-#include "PlayerSingleController.h"
+#include "CoreEntities\PlayerSingleController.h"
 #include "CustomEvents.h"
 #include "Pellet.h"
 #include <exception>

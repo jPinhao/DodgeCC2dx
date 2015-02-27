@@ -73,7 +73,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(EngineRoot)cocos\audio\include;$(EngineRoot)external;$(EngineRoot)external\chipmunk\include\chipmunk;$(EngineRoot)extensions;..\Classes;..;%(AdditionalIncludeDirectories);$(_COCOS_HEADER_WIN32_BEGIN);$(_COCOS_HEADER_WIN32_END)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(EngineRoot)cocos\audio\include;$(EngineRoot)external;$(EngineRoot)external\chipmunk\include\chipmunk;$(EngineRoot)extensions;..\Classes;..\Classes\GameAgnostic;..;%(AdditionalIncludeDirectories);$(_COCOS_HEADER_WIN32_BEGIN);$(_COCOS_HEADER_WIN32_END);</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USE_MATH_DEFINES;GL_GLEXT_PROTOTYPES;CC_ENABLE_CHIPMUNK_INTEGRATION=1;COCOS2D_DEBUG=1;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -137,24 +137,49 @@ xcopy /Y /Q "$(EngineRoot)external\websockets\prebuilt\win32\*.*" "$(OutDir)"</C
     </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\Classes\AnimationLoader.cpp" />
     <ClCompile Include="..\Classes\AppDelegate.cpp" />
+    <ClCompile Include="..\Classes\DamageComponent.cpp" />
     <ClCompile Include="..\Classes\DodgeLevel.cpp" />
+    <ClCompile Include="..\Classes\DodgePlayerController.cpp" />
+    <ClCompile Include="..\Classes\GameAgnostic\CoreEntities\Controller.cpp" />
+    <ClCompile Include="..\Classes\GameAgnostic\CoreEntities\MultiController.cpp" />
+    <ClCompile Include="..\Classes\GameAgnostic\CoreEntities\Pawn.cpp" />
+    <ClCompile Include="..\Classes\GameAgnostic\CoreEntities\PlayerSingleController.cpp" />
+    <ClCompile Include="..\Classes\GameAgnostic\CoreEntities\SingleController.cpp" />
+    <ClCompile Include="..\Classes\GameAgnostic\EntityComponents\SpawnComponent.cpp" />
+    <ClCompile Include="..\Classes\GameAgnostic\PlayerManager.cpp" />
+    <ClCompile Include="..\Classes\GameAgnostic\SpawnController.cpp" />
+    <ClCompile Include="..\Classes\GameAgnostic\SpawnVolume.cpp" />
     <ClCompile Include="..\Classes\LevelManager.cpp" />
     <ClCompile Include="..\Classes\Pellet.cpp" />
-    <ClCompile Include="..\Classes\SpawnComponent.cpp" />
-    <ClCompile Include="..\Classes\SpawnVolume.cpp" />
+    <ClCompile Include="..\Classes\Player.cpp" />
+    <ClCompile Include="..\Classes\StaticHelpers.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Classes\AnimationLoader.h" />
     <ClInclude Include="..\Classes\AppDelegate.h" />
+    <ClInclude Include="..\Classes\CustomEvents.h" />
+    <ClInclude Include="..\Classes\DamageComponent.h" />
     <ClInclude Include="..\Classes\DodgeLevel.h" />
+    <ClInclude Include="..\Classes\DodgePlayerController.h" />
+    <ClInclude Include="..\Classes\GameAgnostic\CoreEntities\Controller.h" />
+    <ClInclude Include="..\Classes\GameAgnostic\CoreEntities\IPlayerController.h" />
+    <ClInclude Include="..\Classes\GameAgnostic\CoreEntities\MultiController.h" />
+    <ClInclude Include="..\Classes\GameAgnostic\CoreEntities\Pawn.h" />
+    <ClInclude Include="..\Classes\GameAgnostic\CoreEntities\PlayerSingleController.h" />
+    <ClInclude Include="..\Classes\GameAgnostic\CoreEntities\SingleController.h" />
+    <ClInclude Include="..\Classes\GameAgnostic\EntityComponents\SpawnComponent.h" />
+    <ClInclude Include="..\Classes\GameAgnostic\EntityComponents\UpdatingComponent.h" />
+    <ClInclude Include="..\Classes\GameAgnostic\PlayerManager.h" />
+    <ClInclude Include="..\Classes\GameAgnostic\SpawnController.h" />
+    <ClInclude Include="..\Classes\GameAgnostic\SpawnVolume.h" />
     <ClInclude Include="..\Classes\LevelManager.h" />
     <ClInclude Include="..\Classes\object_tags.h" />
     <ClInclude Include="..\Classes\Pellet.h" />
-    <ClInclude Include="..\Classes\SpawnVolume.h" />
-    <ClInclude Include="..\Classes\SpawnComponent.h" />
+    <ClInclude Include="..\Classes\Player.h" />
+    <ClInclude Include="..\Classes\PlayerState.h" />
+    <ClInclude Include="..\Classes\PlayerVariable.h" />
+    <ClInclude Include="..\Classes\StaticHelpers.h" />
     <ClInclude Include="main.h" />
   </ItemGroup>
   <ItemGroup>
